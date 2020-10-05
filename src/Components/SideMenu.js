@@ -10,9 +10,8 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import DescriptionIcon from '@material-ui/icons/Description';
 import MailIcon from '@material-ui/icons/Mail';
 import Image from '../assets/images/inbound.png';
-import { useSelector } from 'react-redux';
+
 import { Link } from 'react-router-dom';
-import { colors } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -27,8 +26,6 @@ const useStyles = makeStyles(theme => ({
     textDecoration: 'none',
     color: theme.palette.text.primary
   }
-  // necessary for content to be below app bar
-  // toolbar: theme.mixins.toolbar,
 }));
 
 const SideMenu = () => {
@@ -49,12 +46,6 @@ const SideMenu = () => {
         </div>
         <Divider />
         <List>
-          {/* {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))} */}
           <Link to='/invoice' className={classes.links}>
             <ListItem button key={1}>
                 <ListItemIcon><DescriptionIcon /></ListItemIcon>

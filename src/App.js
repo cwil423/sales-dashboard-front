@@ -10,16 +10,13 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 
 
-
-
-
 function App() {
   const themeColor = useSelector(state => state.theme);
 
   const theme = createMuiTheme({
     palette: {
       type: themeColor ? 'light': 'dark',
-      primary: themeColor ? {main: '#f5f5f5'} : {main: '#333'},
+      // primary: themeColor ? {main: '#f5f5f5'} : {main: '#333'},
     }
   })
 
