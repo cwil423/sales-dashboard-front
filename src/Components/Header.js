@@ -8,7 +8,6 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Image from '../assets/images/quickbooks.png';
 import hoverImage from '../assets/images/quickbooksHover.png';
-import { PinDropSharp } from '@material-ui/icons';
 import SettingsBrightnessIcon from '@material-ui/icons/SettingsBrightness';
 import { useDispatch } from 'react-redux';
 
@@ -32,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     border: 'none',
     borderRadius: '5px',
     cursor: 'pointer',
-    '&:hover': {backgroundImage: `url(${hoverImage})`}
+    '&:hover': { backgroundImage: `url(${hoverImage})` },
   },
 }));
 
@@ -44,22 +43,29 @@ export default function Header(props) {
   let quickbooksButton = null;
   if (props.quickbooksButton) {
     quickbooksButton = (
-      <a 
+      <a
         className={classes.quickbooksButton}
-        href={'http://localhost:4000/oauth'}>
+        href={'http://localhost:4000/oauth'}
+      >
+        Button
       </a>
-    )
-  };
+    );
+  }
 
   const themeHandler = () => {
-    dispatch({type: 'SET_THEME'})
-  }
+    dispatch({ type: 'SET_THEME' });
+  };
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" color='primary'>
+      <AppBar position="static" color="primary">
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="menu"
+          >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
@@ -68,10 +74,11 @@ export default function Header(props) {
           {/* <IconButton>
             {quickbooksButton}
           </IconButton> */}
-          
+
           <IconButton onClick={themeHandler}>
             <SettingsBrightnessIcon />
           </IconButton>
+          <Button color="inherit">Login</Button>
         </Toolbar>
       </AppBar>
     </div>

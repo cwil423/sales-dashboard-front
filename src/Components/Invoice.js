@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from './Header';
 import PageHeader from './PageHeader';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import SideMenu from './SideMenu';
 import axios from 'axios';
@@ -19,57 +20,53 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     margin: theme.spacing(2),
     padding: theme.spacing(2),
-    width: '400px'
+    width: '400px',
   },
   form: {
-    margin: theme.spacing(2)
-  }
+    margin: theme.spacing(2),
+  },
 }));
-
-
 
 const Invoice = () => {
   const classes = useStyles();
   const [customers, setCustomers] = useState([]);
   const [salespeople, setSalespeople] = useState([]);
+  // const [price, setprice] = useState(0);
+  // const [quantity, setquantity] = useState(0);
 
   const createInvoiceHandler = () => {
     axios({
       method: 'post',
       url: 'http://localhost:4000/sales/invoice',
-      data: {
-  
-      }
-    })
-  }
-  
+      data: {},
+    });
+  };
+
   const getCustomerHandler = (letters) => {
     axios({
       method: 'post',
       url: 'http://localhost:4000/sales/customers',
-      data: {letters: letters}
-    }).then(response => {
-      setCustomers(response.data)
-      }
-    )
-  }
+      data: { letters: letters },
+    }).then((response) => {
+      setCustomers(response.data);
+    });
+  };
 
   const getSalespersonHandler = (letters) => {
     axios({
       method: 'post',
       url: 'http://localhost:4000/sales/salespeople',
-      data: {letters: letters}
-    }).then(response => {
-      setSalespeople(response.data)
-      }
-    )
-  }
+      data: { letters: letters },
+    }).then((response) => {
+      setSalespeople(response.data);
+    });
+  };
 
-  return ( 
+  return (
     <div className={classes.root}>
-      <Header quickbooksButton/>
-      <PageHeader 
-        icon={<TrendingUpIcon fontSize='large'/>}
+      <Header quickbooksButton />
+      <PageHeader
+        icon={<TrendingUpIcon fontSize="large" />}
         title="Invoices"
         subtitle="Create and manage invoices"
       />
@@ -80,17 +77,21 @@ const Invoice = () => {
             <Autocomplete
               id="combo-box-demo"
               options={customers}
-              getOptionLabel={(option) => `${option.first_name} ${option.last_name}`}
+              getOptionLabel={(option) =>
+                `${option.first_name} ${option.last_name}`
+              }
               style={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Customer" variant="outlined" />}
+              renderInput={(params) => (
+                <TextField {...params} label="Customer" variant="outlined" />
+              )}
               onInputChange={(event, newInputValue) => {
-                if (newInputValue != '') {
+                if (newInputValue !== '') {
                   let letters = newInputValue;
                   getCustomerHandler(letters);
                 }
               }}
               onChange={(event, newValue) => {
-                console.log(newValue)
+                console.log(newValue);
               }}
             />
           </div>
@@ -98,9 +99,13 @@ const Invoice = () => {
             <Autocomplete
               id="combo-box-demo"
               options={salespeople}
-              getOptionLabel={(option) => `${option.first_name} ${option.last_name}`}
+              getOptionLabel={(option) =>
+                `${option.first_name} ${option.last_name}`
+              }
               style={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Salesperson" variant="outlined" />}
+              renderInput={(params) => (
+                <TextField {...params} label="Salesperson" variant="outlined" />
+              )}
               onInputChange={(event, newInputValue) => {
                 if (newInputValue != '') {
                   let letters = newInputValue;
@@ -110,22 +115,45 @@ const Invoice = () => {
             />
           </div>
           <div>
-            <TextField id='outlined-basic' label='Product' variant='outlined' margin='dense' />
+            <TextField
+              id="outlined-basic"
+              label="Product"
+              variant="outlined"
+              margin="dense"
+            />
           </div>
           <div>
-            <TextField id='outlined-basic' label='Price' variant='outlined' margin='dense' />
+            <TextField
+              id="outlined-basic"
+              label="Price"
+              variant="outlined"
+              margin="dense"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
+            />
           </div>
           <div>
-            <TextField id='outlined-basic' label='Quantity' variant='outlined' margin='dense' />
+            <TextField
+              id="outlined-basic"
+              type="number"
+              label="Quantity"
+              variant="outlined"
+              margin="dense"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">#</InputAdornment>
+                ),
+              }}
+            />
           </div>
         </form>
         <button onClick={() => console.log(customers)}>Create Invoice</button>
       </Card>
-
-
-
     </div>
-   );
-}
- 
+  );
+};
+
 export default Invoice;

@@ -1,13 +1,7 @@
 import React from 'react';
 
 const SalesForm = () => {
+  return <form></form>;
+};
 
-  
-  return ( 
-    <form>
-      
-    </form>
-   );
-}
- 
 export default SalesForm;
