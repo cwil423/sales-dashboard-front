@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import Header from './Header';
-import PageHeader from './PageHeader';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import SideMenu from './SideMenu';
-import axios from 'axios';
 import { Card, makeStyles, TextField } from '@material-ui/core';
+import axios from 'axios';
+import Header from './Header';
+import PageHeader from './PageHeader';
+import SideMenu from './SideMenu';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,19 +34,19 @@ const Invoice = () => {
   // const [price, setprice] = useState(0);
   // const [quantity, setquantity] = useState(0);
 
-  const createInvoiceHandler = () => {
-    axios({
-      method: 'post',
-      url: 'http://localhost:4000/sales/invoice',
-      data: {},
-    });
-  };
+  // const createInvoiceHandler = () => {
+  //   axios({
+  //     method: 'post',
+  //     url: 'http://localhost:4000/sales/invoice',
+  //     data: {},
+  //   });
+  // };
 
   const getCustomerHandler = (letters) => {
     axios({
       method: 'post',
       url: 'http://localhost:4000/sales/customers',
-      data: { letters: letters },
+      data: { letters },
     }).then((response) => {
       setCustomers(response.data);
     });
@@ -56,7 +56,7 @@ const Invoice = () => {
     axios({
       method: 'post',
       url: 'http://localhost:4000/sales/salespeople',
-      data: { letters: letters },
+      data: { letters },
     }).then((response) => {
       setSalespeople(response.data);
     });
@@ -86,7 +86,7 @@ const Invoice = () => {
               )}
               onInputChange={(event, newInputValue) => {
                 if (newInputValue !== '') {
-                  let letters = newInputValue;
+                  const letters = newInputValue;
                   getCustomerHandler(letters);
                 }
               }}
@@ -107,8 +107,8 @@ const Invoice = () => {
                 <TextField {...params} label="Salesperson" variant="outlined" />
               )}
               onInputChange={(event, newInputValue) => {
-                if (newInputValue != '') {
-                  let letters = newInputValue;
+                if (newInputValue !== '') {
+                  const letters = newInputValue;
                   getSalespersonHandler(letters);
                 }
               }}
@@ -150,7 +150,9 @@ const Invoice = () => {
             />
           </div>
         </form>
-        <button onClick={() => console.log(customers)}>Create Invoice</button>
+        <button type="button" onClick={() => console.log(customers)}>
+          Create Invoice
+        </button>
       </Card>
     </div>
   );

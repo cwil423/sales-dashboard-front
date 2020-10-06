@@ -1,44 +1,37 @@
-import { Card, makeStyles, Paper, Typography } from '@material-ui/core';
-import { CallMissedSharp } from '@material-ui/icons';
 import React from 'react';
+import { Card, makeStyles, Paper, Typography } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
   },
   pageIcon: {
     display: 'inline-block',
     padding: theme.spacing(2),
-    margin: theme.spacing(2)
+    margin: theme.spacing(2),
   },
   pageHeader: {
     display: 'flex',
     padding: theme.spacing(2),
     // justifyContent: 'center',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 }));
 
-const PageHeader = (props) => {
+const PageHeader = ({ icon, title, subtitle }) => {
   const classes = useStyles();
 
-  return ( 
+  return (
     <Paper elevation={0} className={classes.root}>
       <div className={classes.pageHeader}>
-        <Card className={classes.pageIcon}>
-          {props.icon }
-        </Card>
+        <Card className={classes.pageIcon}>{icon}</Card>
         <div>
-          <Typography variant='h4'>
-            {props.title}
-          </Typography>
-          <Typography>
-            {props.subtitle}
-          </Typography>
+          <Typography variant="h4">{title}</Typography>
+          <Typography>{subtitle}</Typography>
         </div>
       </div>
     </Paper>
-   );
-}
- 
+  );
+};
+
 export default PageHeader;

@@ -1,20 +1,19 @@
-const { CallToActionSharp } = require("@material-ui/icons")
-
 const initialState = {
-  theme: true
-}
+  theme: true,
+};
 
 const reducer = (state = initialState, action) => {
-  switch(action.type) {
+  const { theme } = state;
+  switch (action.type) {
     case 'SET_THEME':
-      const theme = state.theme
       return {
         ...state,
-        theme: !theme 
-      }
-
+        theme: !theme,
+      };
+    default:
+      break;
   }
   return state;
-}
+};
 
 export default reducer;

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import AssessmentIcon from '@material-ui/icons/Assessment';
-import PageHeader from './PageHeader';
+import { makeStyles } from '@material-ui/core';
 import axios from 'axios';
+import PageHeader from './PageHeader';
 import Header from './Header';
 import SideMenu from './SideMenu';
-import { makeStyles } from '@material-ui/core';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     paddingLeft: '240px',
     width: '100%',
@@ -50,7 +50,9 @@ const Home = () => {
         title="Home Dashboard"
         subtitle="General graphs and trends."
       />
-      <button onClick={apiCallHandler}>Click</button>
+      <button type="button" onClick={apiCallHandler}>
+        Click
+      </button>
     </div>
   );
 };

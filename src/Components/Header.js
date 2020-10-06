@@ -6,10 +6,10 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import Image from '../assets/images/quickbooks.png';
-import hoverImage from '../assets/images/quickbooksHover.png';
 import SettingsBrightnessIcon from '@material-ui/icons/SettingsBrightness';
 import { useDispatch } from 'react-redux';
+import Image from '../assets/images/quickbooks.png';
+import hoverImage from '../assets/images/quickbooksHover.png';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,22 +35,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Header(props) {
+export default function Header() {
   const classes = useStyles();
 
   const dispatch = useDispatch();
 
-  let quickbooksButton = null;
-  if (props.quickbooksButton) {
-    quickbooksButton = (
-      <a
-        className={classes.quickbooksButton}
-        href={'http://localhost:4000/oauth'}
-      >
-        Button
-      </a>
-    );
-  }
+  // let quickbooksButton = null;
+  // if (props.quickbooksButton) {
+  //   quickbooksButton = (
+  //     <a
+  //       className={classes.quickbooksButton}
+  //       href="http://localhost:4000/oauth"
+  //     >
+  //       Button
+  //     </a>
+  //   );
+  // }
 
   const themeHandler = () => {
     dispatch({ type: 'SET_THEME' });

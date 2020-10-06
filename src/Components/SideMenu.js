@@ -8,9 +8,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import HomeIcon from '@material-ui/icons/Home';
 import DescriptionIcon from '@material-ui/icons/Description';
-import Image from '../assets/images/inbound.png';
-
 import { Link } from 'react-router-dom';
+import Image from '../assets/images/inbound.png';
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -41,7 +40,7 @@ const SideMenu = () => {
     >
       <div className={classes.toolbar} />
       <div className={classes.logo}>
-        <img src={Image} />
+        <img src={Image} alt="" />
       </div>
       <Divider />
       <List>
@@ -50,7 +49,7 @@ const SideMenu = () => {
             <ListItemIcon>
               <HomeIcon />
             </ListItemIcon>
-            <ListItemText primary={'Home'} />
+            <ListItemText primary="Home" />
           </ListItem>
         </Link>
         <Link to="/invoice" className={classes.links}>
@@ -58,7 +57,7 @@ const SideMenu = () => {
             <ListItemIcon>
               <DescriptionIcon />
             </ListItemIcon>
-            <ListItemText primary={'Invoices'} />
+            <ListItemText primary="Invoices" />
           </ListItem>
         </Link>
       </List>
