@@ -31,8 +31,13 @@ const Invoice = () => {
   const classes = useStyles();
   const [customers, setCustomers] = useState([]);
   const [salespeople, setSalespeople] = useState([]);
-  // const [price, setprice] = useState(0);
-  // const [quantity, setquantity] = useState(0);
+  const [products, setProducts] = useState([]);
+  const [price, setPrice] = useState(0);
+  const [quantity, setQuantity] = useState(0);
+  const [customer, setCustomer] = useState();
+  const [salesperson, setSalesperson] = useState();
+  const [product, setProduct] = useState();
+  const [date, setDate] = useState();
 
   // const createInvoiceHandler = () => {
   //   axios({
@@ -59,6 +64,16 @@ const Invoice = () => {
       data: { letters },
     }).then((response) => {
       setSalespeople(response.data);
+    });
+  };
+
+  const getProductsHandler = (letters) => {
+    axios({
+      method: 'post',
+      url: 'http://localhost:4000/sales/products',
+      data: { letters },
+    }).then((response) => {
+      setProducts(response.data);
     });
   };
 
@@ -91,7 +106,7 @@ const Invoice = () => {
                 }
               }}
               onChange={(event, newValue) => {
-                console.log(newValue);
+                setCustomer(newValue);
               }}
             />
           </div>
@@ -112,14 +127,29 @@ const Invoice = () => {
                   getSalespersonHandler(letters);
                 }
               }}
+              onChange={(event, newValue) => {
+                setSalesperson(newValue);
+              }}
             />
           </div>
           <div>
-            <TextField
-              id="outlined-basic"
-              label="Product"
-              variant="outlined"
-              margin="dense"
+            <Autocomplete
+              id="combo-box-demo"
+              options={products}
+              getOptionLabel={(option) => `${option.product_name}`}
+              style={{ width: 300 }}
+              renderInput={(params) => (
+                <TextField {...params} label="Product" variant="outlined" />
+              )}
+              onInputChange={(event, newInputValue) => {
+                if (newInputValue !== '') {
+                  const letters = newInputValue;
+                  getProductsHandler(letters);
+                }
+              }}
+              onChange={(event, newValue) => {
+                setProduct(newValue);
+              }}
             />
           </div>
           <div>
@@ -132,6 +162,9 @@ const Invoice = () => {
                 startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
                 ),
+              }}
+              onChange={(event) => {
+                setPrice(event.target.value);
               }}
             />
           </div>
@@ -147,10 +180,28 @@ const Invoice = () => {
                   <InputAdornment position="start">#</InputAdornment>
                 ),
               }}
+              onChange={(event) => {
+                setQuantity(event.target.value);
+              }}
+            />
+          </div>
+          <div>
+            <TextField
+              id="outlined-basic"
+              type="date"
+              label="Service Date"
+              variant="outlined"
+              margin="dense"
+              InputProps={{
+                startAdornment: <InputAdornment position="start" />,
+              }}
+              onChange={(event) => {
+                setDate(event.target.value);
+              }}
             />
           </div>
         </form>
-        <button type="button" onClick={() => console.log(customers)}>
+        <button type="button" onClick={() => console.log(product)}>
           Create Invoice
         </button>
       </Card>
