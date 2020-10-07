@@ -37,7 +37,7 @@ const Invoice = () => {
   const [customer, setCustomer] = useState();
   const [salesperson, setSalesperson] = useState();
   const [product, setProduct] = useState();
-  const [date, setDate] = useState();
+  const [serviceDate, setServiceDate] = useState();
 
   // const createInvoiceHandler = () => {
   //   axios({
@@ -75,6 +75,24 @@ const Invoice = () => {
     }).then((response) => {
       setProducts(response.data);
     });
+  };
+
+  const submitHandler = () => {
+    const invoice = {
+      customer,
+      salesperson,
+      product,
+      price,
+      quantity,
+      serviceDate,
+    };
+    axios({
+      method: 'post',
+      url: 'http://localhost:4000/sales/invoice',
+      data: {
+        invoice,
+      },
+    }).then((response) => console.log(response));
   };
 
   return (
@@ -196,12 +214,12 @@ const Invoice = () => {
                 startAdornment: <InputAdornment position="start" />,
               }}
               onChange={(event) => {
-                setDate(event.target.value);
+                setServiceDate(event.target.value);
               }}
             />
           </div>
         </form>
-        <button type="button" onClick={() => console.log(product)}>
+        <button type="button" onClick={submitHandler}>
           Create Invoice
         </button>
       </Card>
