@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AssessmentIcon from '@material-ui/icons/Assessment';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Card } from '@material-ui/core';
 import axios from 'axios';
 import PageHeader from './PageHeader';
 import Header from './Header';
@@ -11,35 +11,24 @@ const useStyles = makeStyles(() => ({
     paddingLeft: '240px',
     width: '100%',
   },
+  card: {
+    display: 'flex',
+    alignContent: 'center',
+    justifyContent: 'center',
+    width: '40%',
+  },
 }));
 
 const Home = () => {
+  const [invoiceTotal, setInvoiceTotal] = useState(0);
   const classes = useStyles();
-  const [authToken, setAuthToken] = useState();
-
-  const getAccessToken = () => {
-    axios
-      .get('http://localhost:4000/oauth/accessToken')
-      .then((response) => setAuthToken({ token: response.data[0].value }));
-  };
 
   useEffect(() => {
-    getAccessToken();
-  }, []);
-
-  // useEffect(() => {
-
-  // }, [])
-
-  const apiCallHandler = () => {
     axios({
-      method: 'post',
-      url: 'http://localhost:4000/quickbooks',
-      data: [authToken],
-    }).then((response) => {
-      console.log(response);
-    });
-  };
+      method: 'GET',
+      url: 'http://localhost:4000/sales/total',
+    }).then((response) => setInvoiceTotal(response.data[0].sum));
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -50,9 +39,9 @@ const Home = () => {
         title="Home Dashboard"
         subtitle="General graphs and trends."
       />
-      <button type="button" onClick={apiCallHandler}>
-        Click
-      </button>
+      <Card className={classes.card}>
+        <h1>Total Invoices: {invoiceTotal}</h1>
+      </Card>
     </div>
   );
 };

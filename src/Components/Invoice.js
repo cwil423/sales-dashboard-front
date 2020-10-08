@@ -39,14 +39,6 @@ const Invoice = () => {
   const [product, setProduct] = useState();
   const [serviceDate, setServiceDate] = useState();
 
-  // const createInvoiceHandler = () => {
-  //   axios({
-  //     method: 'post',
-  //     url: 'http://localhost:4000/sales/invoice',
-  //     data: {},
-  //   });
-  // };
-
   const getCustomerHandler = (letters) => {
     axios({
       method: 'post',
