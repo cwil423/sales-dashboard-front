@@ -39,33 +39,25 @@ const Invoice = () => {
   const [product, setProduct] = useState();
   const [serviceDate, setServiceDate] = useState();
 
-  const getCustomerHandler = (letters) => {
+  const fetchDataHandler = (letters, type) => {
     axios({
       method: 'post',
-      url: 'http://localhost:4000/sales/customers',
-      data: { letters },
+      url: 'http://localhost:4000/sales/data',
+      data: { letters, type },
     }).then((response) => {
-      setCustomers(response.data);
-    });
-  };
-
-  const getSalespersonHandler = (letters) => {
-    axios({
-      method: 'post',
-      url: 'http://localhost:4000/sales/salespeople',
-      data: { letters },
-    }).then((response) => {
-      setSalespeople(response.data);
-    });
-  };
-
-  const getProductsHandler = (letters) => {
-    axios({
-      method: 'post',
-      url: 'http://localhost:4000/sales/products',
-      data: { letters },
-    }).then((response) => {
-      setProducts(response.data);
+      switch (type) {
+        case 'customers':
+          setCustomers(response.data);
+          break;
+        case 'salespeople':
+          setSalespeople(response.data);
+          break;
+        case 'products':
+          setProducts(response.data);
+          break;
+        default:
+          break;
+      }
     });
   };
 
@@ -112,7 +104,7 @@ const Invoice = () => {
               onInputChange={(event, newInputValue) => {
                 if (newInputValue !== '') {
                   const letters = newInputValue;
-                  getCustomerHandler(letters);
+                  fetchDataHandler(letters, 'customers');
                 }
               }}
               onChange={(event, newValue) => {
@@ -134,7 +126,7 @@ const Invoice = () => {
               onInputChange={(event, newInputValue) => {
                 if (newInputValue !== '') {
                   const letters = newInputValue;
-                  getSalespersonHandler(letters);
+                  fetchDataHandler(letters, 'salespeople');
                 }
               }}
               onChange={(event, newValue) => {
@@ -154,7 +146,7 @@ const Invoice = () => {
               onInputChange={(event, newInputValue) => {
                 if (newInputValue !== '') {
                   const letters = newInputValue;
-                  getProductsHandler(letters);
+                  fetchDataHandler(letters, 'products');
                 }
               }}
               onChange={(event, newValue) => {

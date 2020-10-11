@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import Login from './Components/Login';
+import React from 'react';
+import { createMuiTheme, ThemeProvider, CssBaseline } from '@material-ui/core';
 import './App.css';
-import { CssBaseline, makeStyles } from '@material-ui/core';
 import { Switch, Route } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Login from './Components/Login';
 import DisplayPage from './Components/DisplayPage';
 import Invoice from './Components/Invoice';
 import Home from './Components/Home';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core';
-import { useSelector } from 'react-redux';
 
 function App() {
   const themeColor = useSelector((state) => state.theme);
@@ -24,7 +23,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Switch>
-          <div className={'app'}>
+          <div className="app">
             <Route exact path="/" component={DisplayPage} />
             <Route path="/login" component={Login} />
             <Route path="/home" component={Home} />
