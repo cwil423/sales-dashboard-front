@@ -2,42 +2,46 @@ import React, { useState } from 'react';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Card, makeStyles, TextField } from '@material-ui/core';
+import { Box, Card, makeStyles, TextField, Button } from '@material-ui/core';
 import axios from 'axios';
 import Header from './Header';
 import PageHeader from './PageHeader';
 import SideMenu from './SideMenu';
+import ProductFields from './ProductFields';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     paddingLeft: '240px',
     width: '100%',
   },
+  invoice: {
+    display: 'flex',
+  },
   createInvoiceCard: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: theme.spacing(2),
+    margin: theme.spacing(4),
     padding: theme.spacing(2),
-    width: '400px',
+    width: '100%',
   },
-  form: {
-    margin: theme.spacing(2),
+  priceAndQuantity: {
+    width: '100px',
+  },
+  customerAndSalesperson: {
+    display: 'flex',
+    marginLeft: '0px',
   },
 }));
 
 const Invoice = () => {
   const classes = useStyles();
-  const [customers, setCustomers] = useState([]);
-  const [salespeople, setSalespeople] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [price, setPrice] = useState(0);
-  const [quantity, setQuantity] = useState(0);
+  const [items, setItems] = useState([
+    { id: 1, product: '', price: 0, quantity: 0, serviceDate: '' },
+  ]);
+  const [customersList, setCustomersList] = useState([]);
+  const [salespeopleList, setSalespeopleList] = useState([]);
   const [customer, setCustomer] = useState();
   const [salesperson, setSalesperson] = useState();
-  const [product, setProduct] = useState();
-  const [serviceDate, setServiceDate] = useState();
 
   const fetchDataHandler = (letters, type) => {
     axios({
@@ -47,13 +51,10 @@ const Invoice = () => {
     }).then((response) => {
       switch (type) {
         case 'customers':
-          setCustomers(response.data);
+          setCustomersList(response.data);
           break;
         case 'salespeople':
-          setSalespeople(response.data);
-          break;
-        case 'products':
-          setProducts(response.data);
+          setSalespeopleList(response.data);
           break;
         default:
           break;
@@ -65,10 +66,7 @@ const Invoice = () => {
     const invoice = {
       customer,
       salesperson,
-      product,
-      price,
-      quantity,
-      serviceDate,
+      items,
     };
     axios({
       method: 'post',
@@ -77,6 +75,48 @@ const Invoice = () => {
         invoice,
       },
     }).then((response) => console.log(response));
+  };
+
+  const addItemHandler = () => {
+    const itemArray = items.slice();
+    const id = itemArray[itemArray.length - 1].id + 1;
+    itemArray.push({
+      id,
+      product: '',
+      price: 0,
+      quantity: 0,
+      serviceDate: '',
+    });
+    setItems(itemArray);
+  };
+
+  const removeItemHandler = () => {
+    const itemArray = items.slice();
+    if (itemArray.length > 1) {
+      itemArray.pop();
+      setItems(itemArray);
+    }
+  };
+
+  const addProductInfoHandler = (value, key, type) => {
+    const itemArray = items;
+    const indexOfItem = key - 1;
+    switch (type) {
+      case 'product':
+        itemArray[indexOfItem].product = value;
+        break;
+      case 'price':
+        itemArray[indexOfItem].price = value;
+        break;
+      case 'quantity':
+        itemArray[indexOfItem].quantity = value;
+        break;
+      case 'serviceDate':
+        itemArray[indexOfItem].serviceDate = value;
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -88,125 +128,75 @@ const Invoice = () => {
         subtitle="Create and manage invoices"
       />
       <SideMenu />
-      <Card className={classes.createInvoiceCard}>
-        <form className={classes.form}>
-          <div>
-            <Autocomplete
-              id="combo-box-demo"
-              options={customers}
-              getOptionLabel={(option) =>
-                `${option.first_name} ${option.last_name}`
-              }
-              style={{ width: 300 }}
-              renderInput={(params) => (
-                <TextField {...params} label="Customer" variant="outlined" />
-              )}
-              onInputChange={(event, newInputValue) => {
-                if (newInputValue !== '') {
-                  const letters = newInputValue;
-                  fetchDataHandler(letters, 'customers');
+
+      <div className={classes.invoice}>
+        <Card className={classes.createInvoiceCard}>
+          <form className={classes.form}>
+            <div className={classes.customerAndSalesperson}>
+              <Autocomplete
+                id="combo-box-demo"
+                options={customersList}
+                getOptionLabel={(option) =>
+                  `${option.first_name} ${option.last_name}`
                 }
-              }}
-              onChange={(event, newValue) => {
-                setCustomer(newValue);
-              }}
-            />
-          </div>
-          <div>
-            <Autocomplete
-              id="combo-box-demo"
-              options={salespeople}
-              getOptionLabel={(option) =>
-                `${option.first_name} ${option.last_name}`
-              }
-              style={{ width: 300 }}
-              renderInput={(params) => (
-                <TextField {...params} label="Salesperson" variant="outlined" />
-              )}
-              onInputChange={(event, newInputValue) => {
-                if (newInputValue !== '') {
-                  const letters = newInputValue;
-                  fetchDataHandler(letters, 'salespeople');
+                style={{ width: 300, padding: 15 }}
+                renderInput={(params) => (
+                  <TextField {...params} label="Customer" variant="outlined" />
+                )}
+                onInputChange={(event, newInputValue) => {
+                  if (newInputValue !== '') {
+                    const letters = newInputValue;
+                    fetchDataHandler(letters, 'customers');
+                  }
+                }}
+                onChange={(event, newValue) => {
+                  setCustomer(newValue);
+                }}
+              />
+              <Autocomplete
+                id="combo-box-demo"
+                options={salespeopleList}
+                getOptionLabel={(option) =>
+                  `${option.first_name} ${option.last_name}`
                 }
-              }}
-              onChange={(event, newValue) => {
-                setSalesperson(newValue);
-              }}
-            />
-          </div>
-          <div>
-            <Autocomplete
-              id="combo-box-demo"
-              options={products}
-              getOptionLabel={(option) => `${option.product_name}`}
-              style={{ width: 300 }}
-              renderInput={(params) => (
-                <TextField {...params} label="Product" variant="outlined" />
-              )}
-              onInputChange={(event, newInputValue) => {
-                if (newInputValue !== '') {
-                  const letters = newInputValue;
-                  fetchDataHandler(letters, 'products');
-                }
-              }}
-              onChange={(event, newValue) => {
-                setProduct(newValue);
-              }}
-            />
-          </div>
-          <div>
-            <TextField
-              id="outlined-basic"
-              label="Price"
-              variant="outlined"
-              margin="dense"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">$</InputAdornment>
-                ),
-              }}
-              onChange={(event) => {
-                setPrice(event.target.value);
-              }}
-            />
-          </div>
-          <div>
-            <TextField
-              id="outlined-basic"
-              type="number"
-              label="Quantity"
-              variant="outlined"
-              margin="dense"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">#</InputAdornment>
-                ),
-              }}
-              onChange={(event) => {
-                setQuantity(event.target.value);
-              }}
-            />
-          </div>
-          <div>
-            <TextField
-              id="outlined-basic"
-              type="date"
-              label="Service Date"
-              variant="outlined"
-              margin="dense"
-              InputProps={{
-                startAdornment: <InputAdornment position="start" />,
-              }}
-              onChange={(event) => {
-                setServiceDate(event.target.value);
-              }}
-            />
-          </div>
-        </form>
-        <button type="button" onClick={submitHandler}>
-          Create Invoice
-        </button>
-      </Card>
+                style={{ width: 300, padding: 15 }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Salesperson"
+                    variant="outlined"
+                  />
+                )}
+                onInputChange={(event, newInputValue) => {
+                  if (newInputValue !== '') {
+                    const letters = newInputValue;
+                    fetchDataHandler(letters, 'salespeople');
+                  }
+                }}
+                onChange={(event, newValue) => {
+                  setSalesperson(newValue);
+                }}
+              />
+            </div>
+            <div className={classes.productSection}>
+              <ProductFields
+                addProductInfo={addProductInfoHandler}
+                numberOfItems={items}
+              />
+            </div>
+          </form>
+          <Button type="button" onClick={addItemHandler}>
+            Add Item
+          </Button>
+          <Button type="button" onClick={removeItemHandler}>
+            Remove Item
+          </Button>
+          <Button type="button" onClick={submitHandler}>
+            Create Invoice
+          </Button>
+          <button onClick={() => console.log(items)}>Click</button>
+        </Card>
+      </div>
     </div>
   );
 };
