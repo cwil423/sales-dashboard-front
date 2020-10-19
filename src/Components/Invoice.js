@@ -2,7 +2,14 @@ import React, { useState, useEffect } from 'react';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Box, Card, makeStyles, TextField, Button } from '@material-ui/core';
+import {
+  FormControlLabel,
+  Checkbox,
+  Card,
+  makeStyles,
+  TextField,
+  Button,
+} from '@material-ui/core';
 import axios from 'axios';
 import Header from './Header';
 import PageHeader from './PageHeader';
@@ -37,16 +44,18 @@ const useStyles = makeStyles((theme) => ({
   customerAndSalesperson: {
     // backgroundColor: 'blue',
     display: 'flex',
+    flexDirection: 'column',
   },
   frequency: {
     display: 'flex',
+    flexDirection: 'column',
     // backgroundColor: 'red',
     paddingRight: '15px',
     alignItems: 'center',
   },
   totalContainer: {
     justifyContent: 'end',
-    backgroundColor: 'blue',
+    // backgroundColor: 'blue',
   },
   total: {
     float: 'right',
@@ -64,7 +73,7 @@ const Invoice = () => {
   const [customer, setCustomer] = useState();
   const [salesperson, setSalesperson] = useState();
   const [frequency, setFrequency] = useState();
-  const [bulk, setBulk] = useState(true);
+  const [bulk, setBulk] = useState(false);
   const [error, setError] = useState(false);
   const [total, setTotal] = useState(0);
 
@@ -164,8 +173,12 @@ const Invoice = () => {
     }
   };
 
-  const closeHandler = () => {
+  const closeErrorHandler = () => {
     setError(false);
+  };
+
+  const bulkCheckHandler = () => {
+    setBulk(!bulk);
   };
 
   return (
@@ -177,7 +190,7 @@ const Invoice = () => {
         subtitle="Create and manage invoices"
       />
       <SideMenu />
-      <ErrorModal error={error} close={closeHandler} />
+      <ErrorModal error={error} close={closeErrorHandler} />
       <div className={classes.invoice}>
         <Card className={classes.createInvoiceCard}>
           <form className={classes.form}>
@@ -249,6 +262,16 @@ const Invoice = () => {
                     setFrequency(event.target.value);
                   }}
                 />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={bulk}
+                      onChange={bulkCheckHandler}
+                      color="primary"
+                    />
+                  }
+                  label="Bulk Order"
+                />
               </div>
             </div>
             <div className={classes.productSection}>
@@ -272,7 +295,7 @@ const Invoice = () => {
           <Button type="button" onClick={submitHandler}>
             Create Invoice
           </Button>
-          <button onClick={() => console.log(items)}>Click</button>
+          <button onClick={() => console.log(bulk)}>Click</button>
         </Card>
       </div>
     </div>
