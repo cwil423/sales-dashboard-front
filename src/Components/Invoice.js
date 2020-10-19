@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -8,6 +8,7 @@ import Header from './Header';
 import PageHeader from './PageHeader';
 import SideMenu from './SideMenu';
 import ProductFields from './ProductFields';
+import ErrorModal from './ErrorModal';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,9 +28,29 @@ const useStyles = makeStyles((theme) => ({
   priceAndQuantity: {
     width: '100px',
   },
-  customerAndSalesperson: {
+  topSection: {
     display: 'flex',
-    marginLeft: '0px',
+    justifyContent: 'space-between',
+    marginBottom: '50px',
+    // backgroundColor: 'teal',
+  },
+  customerAndSalesperson: {
+    // backgroundColor: 'blue',
+    display: 'flex',
+  },
+  frequency: {
+    display: 'flex',
+    // backgroundColor: 'red',
+    paddingRight: '15px',
+    alignItems: 'center',
+  },
+  totalContainer: {
+    justifyContent: 'end',
+    backgroundColor: 'blue',
+  },
+  total: {
+    float: 'right',
+    marginRight: '25px',
   },
 }));
 
@@ -42,6 +63,18 @@ const Invoice = () => {
   const [salespeopleList, setSalespeopleList] = useState([]);
   const [customer, setCustomer] = useState();
   const [salesperson, setSalesperson] = useState();
+  const [frequency, setFrequency] = useState();
+  const [bulk, setBulk] = useState(true);
+  const [error, setError] = useState(false);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    let totalPrice = 0;
+    items.forEach((item) => {
+      totalPrice += item.price * item.quantity;
+    });
+    setTotal(totalPrice);
+  }, [items]);
 
   const fetchDataHandler = (letters, type) => {
     axios({
@@ -67,6 +100,8 @@ const Invoice = () => {
       customer,
       salesperson,
       items,
+      frequency,
+      bulk,
     };
     axios({
       method: 'post',
@@ -74,7 +109,13 @@ const Invoice = () => {
       data: {
         invoice,
       },
-    }).then((response) => console.log(response));
+    }).then((response) => {
+      if (response.data.message) {
+        setError(
+          'Error: Something went wrong and the transaction was not recorded.'
+        );
+      }
+    });
   };
 
   const addItemHandler = () => {
@@ -99,24 +140,32 @@ const Invoice = () => {
   };
 
   const addProductInfoHandler = (value, key, type) => {
-    const itemArray = items;
+    const itemArray = JSON.parse(JSON.stringify(items));
     const indexOfItem = key - 1;
     switch (type) {
       case 'product':
         itemArray[indexOfItem].product = value;
+        setItems(itemArray);
         break;
       case 'price':
         itemArray[indexOfItem].price = value;
+        setItems(itemArray);
         break;
       case 'quantity':
         itemArray[indexOfItem].quantity = value;
+        setItems(itemArray);
         break;
       case 'serviceDate':
         itemArray[indexOfItem].serviceDate = value;
+        setItems(itemArray);
         break;
       default:
         break;
     }
+  };
+
+  const closeHandler = () => {
+    setError(false);
   };
 
   return (
@@ -128,61 +177,90 @@ const Invoice = () => {
         subtitle="Create and manage invoices"
       />
       <SideMenu />
-
+      <ErrorModal error={error} close={closeHandler} />
       <div className={classes.invoice}>
         <Card className={classes.createInvoiceCard}>
           <form className={classes.form}>
-            <div className={classes.customerAndSalesperson}>
-              <Autocomplete
-                id="combo-box-demo"
-                options={customersList}
-                getOptionLabel={(option) =>
-                  `${option.first_name} ${option.last_name}`
-                }
-                style={{ width: 300, padding: 15 }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Customer" variant="outlined" />
-                )}
-                onInputChange={(event, newInputValue) => {
-                  if (newInputValue !== '') {
-                    const letters = newInputValue;
-                    fetchDataHandler(letters, 'customers');
+            <div className={classes.topSection}>
+              <div className={classes.customerAndSalesperson}>
+                <Autocomplete
+                  id="combo-box-demo"
+                  options={customersList}
+                  getOptionLabel={(option) =>
+                    `${option.first_name} ${option.last_name}`
                   }
-                }}
-                onChange={(event, newValue) => {
-                  setCustomer(newValue);
-                }}
-              />
-              <Autocomplete
-                id="combo-box-demo"
-                options={salespeopleList}
-                getOptionLabel={(option) =>
-                  `${option.first_name} ${option.last_name}`
-                }
-                style={{ width: 300, padding: 15 }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Salesperson"
-                    variant="outlined"
-                  />
-                )}
-                onInputChange={(event, newInputValue) => {
-                  if (newInputValue !== '') {
-                    const letters = newInputValue;
-                    fetchDataHandler(letters, 'salespeople');
+                  style={{ width: 300, padding: 15 }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Customer"
+                      variant="outlined"
+                    />
+                  )}
+                  onInputChange={(event, newInputValue) => {
+                    if (newInputValue !== '') {
+                      const letters = newInputValue;
+                      fetchDataHandler(letters, 'customers');
+                    }
+                  }}
+                  onChange={(event, newValue) => {
+                    setCustomer(newValue);
+                  }}
+                />
+                <Autocomplete
+                  id="combo-box-demo"
+                  options={salespeopleList}
+                  getOptionLabel={(option) =>
+                    `${option.first_name} ${option.last_name}`
                   }
-                }}
-                onChange={(event, newValue) => {
-                  setSalesperson(newValue);
-                }}
-              />
+                  style={{ width: 300, padding: 15 }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Salesperson"
+                      variant="outlined"
+                    />
+                  )}
+                  onInputChange={(event, newInputValue) => {
+                    if (newInputValue !== '') {
+                      const letters = newInputValue;
+                      fetchDataHandler(letters, 'salespeople');
+                    }
+                  }}
+                  onChange={(event, newValue) => {
+                    setSalesperson(newValue);
+                  }}
+                />
+              </div>
+
+              <div className={classes.frequency}>
+                <TextField
+                  id="outlined-basic"
+                  type="number"
+                  label="Deliveries per year"
+                  variant="outlined"
+                  margin="dense"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">#</InputAdornment>
+                    ),
+                  }}
+                  onChange={(event) => {
+                    setFrequency(event.target.value);
+                  }}
+                />
+              </div>
             </div>
             <div className={classes.productSection}>
               <ProductFields
                 addProductInfo={addProductInfoHandler}
                 numberOfItems={items}
               />
+            </div>
+            <div className={classes.totalContainer}>
+              <h3 className={classes.total}>
+                Total : ${parseFloat(total).toFixed(2)}
+              </h3>
             </div>
           </form>
           <Button type="button" onClick={addItemHandler}>

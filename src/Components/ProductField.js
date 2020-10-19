@@ -70,20 +70,19 @@ export default function ProductFields(props) {
             props.addProductInfo(newValue, props.id, 'product');
           }}
         />
-        <TextField
-          className={classes.priceAndQuantity}
+        {/* <TextField
           id="outlined-basic"
-          label="Price"
+          type="text"
+          label="Description"
           variant="outlined"
           margin="dense"
-          size="small"
-          InputProps={{
-            startAdornment: <InputAdornment position="start">$</InputAdornment>,
-          }}
+          // InputProps={{
+          //   startAdornment: <InputAdornment position="start" />,
+          // }}
           onChange={(event) => {
-            props.addProductInfo(event.target.value, props.id, 'price');
+            props.addProductInfo(event.target.value, props.id, 'serviceDate');
           }}
-        />
+        /> */}
         <TextField
           className={classes.priceAndQuantity}
           id="outlined-basic"
@@ -96,6 +95,20 @@ export default function ProductFields(props) {
           }}
           onChange={(event) => {
             props.addProductInfo(event.target.value, props.id, 'quantity');
+          }}
+        />
+        <TextField
+          className={classes.priceAndQuantity}
+          id="outlined-basic"
+          label="Price"
+          variant="outlined"
+          margin="dense"
+          size="small"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
+          onChange={(event) => {
+            props.addProductInfo(event.target.value, props.id, 'price');
           }}
         />
         <TextField
