@@ -21,6 +21,7 @@ import PageHeader from './PageHeader';
 import SideMenu from './SideMenu';
 import ProductFields from './ProductFields';
 import Modal from './Modal';
+import Total from './Total';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,6 +71,7 @@ const useStyles = makeStyles((theme) => ({
   buttons: {
     display: 'flex',
     justifyContent: 'center',
+    marginTop: '100px',
   },
   frequencyAndBulk: {
     display: 'flex',
@@ -224,7 +226,9 @@ const Invoice = () => {
               salesperson: null,
               frequency: null,
               bulk: false,
-              products: [],
+              products: [
+                { id: 1, product: '', price: 0, quantity: 0, serviceDate: '' },
+              ],
             }}
             validationSchema={yupSchema}
             onSubmit={(values) => {
@@ -281,28 +285,6 @@ const Invoice = () => {
                         setFieldValue('salesperson', value)
                       }
                     />
-
-                    {/* <Select
-                  options={customersList}
-                  getOptionLabel={(option) =>
-                    `${option.first_name} ${option.last_name}`
-                  }
-                  onInputChange={(input) => {
-                    if (input !== '') {
-                      const letters = input;
-                      fetchDataHandler(letters, 'customers');
-                    }
-                  }}
-                  onChange={(option) =>
-                    handleChange('autocomplete')(option.first_name)
-                  }
-                  // onInputChange={(event, newInputValue) => {
-                  //   if (newInputValue !== '') {
-                  //     const letters = newInputValue;
-                  //     fetchDataHandler(letters, 'customers');
-                  //   }
-                  // }}
-                /> */}
                   </div>
                   <div className={classes.frequencyAndBulk}>
                     <Field
@@ -319,130 +301,93 @@ const Invoice = () => {
                       }}
                     />
                     <div className={classes.bulk}>
+                      <Field as={Checkbox} name="bulk" checked={values.bulk} />
                       <h3>Bulk Order</h3>
                     </div>
                   </div>
                 </div>
                 <div className={classes.productSection}>
-                  <Field as={TextField} name="products" />
+                  <Field
+                    as={ProductFields}
+                    numberOfItems={values.products}
+                    addProductInfo={(value, id, type) => {
+                      const itemArray = JSON.parse(
+                        JSON.stringify(values.products)
+                      );
+                      const indexOfItem = id - 1;
+                      switch (type) {
+                        case 'product':
+                          itemArray[indexOfItem].product = value;
+                          setFieldValue('products', itemArray);
+                          break;
+                        case 'price':
+                          itemArray[indexOfItem].price = value;
+                          setFieldValue('products', itemArray);
+                          break;
+                        case 'quantity':
+                          itemArray[indexOfItem].quantity = value;
+                          setFieldValue('products', itemArray);
+                          break;
+                        case 'serviceDate':
+                          itemArray[indexOfItem].serviceDate = value;
+                          setFieldValue('products', itemArray);
+                          break;
+                        default:
+                          break;
+                      }
+                    }}
+                  />
+                </div>
+                <div className={classes.totalContainer}>
+                  <h3 className={classes.total}>
+                    <Total items={values.products} />
+                  </h3>
+                </div>
+                <div className={classes.buttons}>
+                  <ButtonGroup>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        const itemArray = JSON.parse(
+                          JSON.stringify(values.products)
+                        );
+                        const id = itemArray[itemArray.length - 1].id + 1;
+                        itemArray.push({
+                          id,
+                          product: '',
+                          price: 0,
+                          quantity: 0,
+                          serviceDate: '',
+                        });
+                        setFieldValue('products', itemArray);
+                      }}
+                    >
+                      Add Item
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        const itemArray = JSON.parse(
+                          JSON.stringify(values.products)
+                        );
+                        if (itemArray.length > 1) {
+                          itemArray.pop();
+                          setFieldValue('products', itemArray);
+                        }
+                      }}
+                    >
+                      Remove Item
+                    </Button>
+                    <Button type="submit" onClick={submitHandler}>
+                      Create Invoice
+                    </Button>
+                  </ButtonGroup>
                 </div>
                 <pre>{JSON.stringify(errors, null, 4)}</pre>
                 <pre>{JSON.stringify(values, null, 4)}</pre>
-                <button
-                  type="button"
-                  onClick={() => console.log(customersList)}
-                >
-                  Click
-                </button>
-                <button type="submit">Submit</button>
               </Form>
             )}
           </Formik>
-          <form className={classes.form}>
-            <div className={classes.topSection}>
-              <div className={classes.customerAndSalesperson}>
-                <Autocomplete
-                  id="combo-box-demo"
-                  options={customersList}
-                  getOptionLabel={(option) =>
-                    `${option.first_name} ${option.last_name}`
-                  }
-                  style={{ width: 300, padding: 15 }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Customer"
-                      variant="outlined"
-                    />
-                  )}
-                  onInputChange={(event, newInputValue) => {
-                    if (newInputValue !== '') {
-                      const letters = newInputValue;
-                      fetchDataHandler(letters, 'customers');
-                    }
-                  }}
-                  onChange={(event, newValue) => {
-                    setCustomer(newValue);
-                  }}
-                />
-                <Autocomplete
-                  id="combo-box-demo"
-                  options={salespeopleList}
-                  getOptionLabel={(option) =>
-                    `${option.first_name} ${option.last_name}`
-                  }
-                  style={{ width: 300, padding: 15 }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Salesperson"
-                      variant="outlined"
-                    />
-                  )}
-                  onInputChange={(event, newInputValue) => {
-                    if (newInputValue !== '') {
-                      const letters = newInputValue;
-                      fetchDataHandler(letters, 'salespeople');
-                    }
-                  }}
-                  onChange={(event, newValue) => {
-                    setSalesperson(newValue);
-                  }}
-                />
-              </div>
-              <div className={classes.frequency}>
-                <TextField
-                  id="outlined-basic"
-                  type="number"
-                  label="Deliveries per year"
-                  variant="outlined"
-                  margin="dense"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">#</InputAdornment>
-                    ),
-                  }}
-                  onChange={(event) => {
-                    setFrequency(event.target.value);
-                  }}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={bulk}
-                      onChange={bulkCheckHandler}
-                      color="primary"
-                    />
-                  }
-                  label="Bulk Order"
-                />
-              </div>
-            </div>
-            <div className={classes.productSection}>
-              <ProductFields
-                addProductInfo={addProductInfoHandler}
-                numberOfItems={items}
-              />
-            </div>
-            <div className={classes.totalContainer}>
-              <h3 className={classes.total}>
-                Total : ${parseFloat(total).toFixed(2)}
-              </h3>
-            </div>
-          </form>
-          <div className={classes.buttons}>
-            <ButtonGroup>
-              <Button type="button" onClick={addItemHandler}>
-                Add Item
-              </Button>
-              <Button type="button" onClick={removeItemHandler}>
-                Remove Item
-              </Button>
-              <Button type="button" onClick={submitHandler}>
-                Create Invoice
-              </Button>
-            </ButtonGroup>
-          </div>
         </Card>
       </div>
     </div>

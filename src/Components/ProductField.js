@@ -4,6 +4,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Box, Card, makeStyles, TextField, Button } from '@material-ui/core';
 import axios from 'axios';
+import { useField } from 'formik';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,6 +67,9 @@ export default function ProductFields(props) {
               fetchDataHandler(letters, 'products');
             }
           }}
+          // onChange={(event, newValue) => {
+          //   props.addProductInfo(newValue, props.id, 'product');
+          // }}
           onChange={(event, newValue) => {
             props.addProductInfo(newValue, props.id, 'product');
           }}
