@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Formik, Form, Field } from 'formik';
+import { CheckboxWithLabel } from 'formik-material-ui';
+import * as Yup from 'yup';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -9,13 +12,15 @@ import {
   makeStyles,
   TextField,
   Button,
+  ButtonGroup,
 } from '@material-ui/core';
+import yup, { object, string } from 'yup';
 import axios from 'axios';
 import Header from './Header';
 import PageHeader from './PageHeader';
 import SideMenu from './SideMenu';
 import ProductFields from './ProductFields';
-import ErrorModal from './ErrorModal';
+import Modal from './Modal';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
     // backgroundColor: 'red',
     paddingRight: '15px',
     alignItems: 'center',
+    justifyContent: 'space-evenly',
   },
   totalContainer: {
     justifyContent: 'end',
@@ -60,6 +66,21 @@ const useStyles = makeStyles((theme) => ({
   total: {
     float: 'right',
     marginRight: '25px',
+  },
+  buttons: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  frequencyAndBulk: {
+    display: 'flex',
+    flexDirection: 'column',
+    // backgroundColor: 'red',
+    paddingRight: '15px',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+  bulk: {
+    display: 'flex',
   },
 }));
 
@@ -181,6 +202,10 @@ const Invoice = () => {
     setBulk(!bulk);
   };
 
+  const yupSchema = Yup.object().shape({
+    name: Yup.string().min(25, 'too short'),
+  });
+
   return (
     <div className={classes.root}>
       <Header quickbooksButton />
@@ -190,9 +215,129 @@ const Invoice = () => {
         subtitle="Create and manage invoices"
       />
       <SideMenu />
-      <ErrorModal error={error} close={closeErrorHandler} />
+      <Modal error={error} close={closeErrorHandler} />
       <div className={classes.invoice}>
         <Card className={classes.createInvoiceCard}>
+          <Formik
+            initialValues={{
+              customer: null,
+              salesperson: null,
+              frequency: null,
+              bulk: false,
+              products: [],
+            }}
+            validationSchema={yupSchema}
+            onSubmit={(values) => {
+              console.log(values);
+            }}
+          >
+            {({ errors, values, handleChange, setFieldValue }) => (
+              <Form>
+                <div className={classes.topSection}>
+                  <div className={classes.customerAndSalesperson}>
+                    <Field
+                      component={Autocomplete}
+                      options={customersList}
+                      getOptionLabel={(option) =>
+                        `${option.first_name} ${option.last_name}`
+                      }
+                      style={{ width: 300, padding: 15 }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Customer"
+                          variant="outlined"
+                        />
+                      )}
+                      onInputChange={(event, newInputValue) => {
+                        if (newInputValue !== '') {
+                          const letters = newInputValue;
+                          fetchDataHandler(letters, 'customers');
+                        }
+                      }}
+                      onChange={(_, value) => setFieldValue('customer', value)}
+                    />
+                    <Field
+                      component={Autocomplete}
+                      options={salespeopleList}
+                      getOptionLabel={(option) =>
+                        `${option.first_name} ${option.last_name}`
+                      }
+                      style={{ width: 300, padding: 15 }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Salesperson"
+                          variant="outlined"
+                        />
+                      )}
+                      onInputChange={(event, newInputValue) => {
+                        if (newInputValue !== '') {
+                          const letters = newInputValue;
+                          fetchDataHandler(letters, 'salespeople');
+                        }
+                      }}
+                      onChange={(_, value) =>
+                        setFieldValue('salesperson', value)
+                      }
+                    />
+
+                    {/* <Select
+                  options={customersList}
+                  getOptionLabel={(option) =>
+                    `${option.first_name} ${option.last_name}`
+                  }
+                  onInputChange={(input) => {
+                    if (input !== '') {
+                      const letters = input;
+                      fetchDataHandler(letters, 'customers');
+                    }
+                  }}
+                  onChange={(option) =>
+                    handleChange('autocomplete')(option.first_name)
+                  }
+                  // onInputChange={(event, newInputValue) => {
+                  //   if (newInputValue !== '') {
+                  //     const letters = newInputValue;
+                  //     fetchDataHandler(letters, 'customers');
+                  //   }
+                  // }}
+                /> */}
+                  </div>
+                  <div className={classes.frequencyAndBulk}>
+                    <Field
+                      as={TextField}
+                      name="frequency"
+                      type="number"
+                      label="Deliveries per year"
+                      variant="outlined"
+                      margin="dense"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">#</InputAdornment>
+                        ),
+                      }}
+                    />
+                    <div className={classes.bulk}>
+                      <h3>Bulk Order</h3>
+                    </div>
+                  </div>
+                </div>
+                <div className={classes.productSection}>
+                  <Field as={TextField} name="products" />
+                </div>
+                <pre>{JSON.stringify(errors, null, 4)}</pre>
+                <pre>{JSON.stringify(values, null, 4)}</pre>
+                <button
+                  type="button"
+                  onClick={() => console.log(customersList)}
+                >
+                  Click
+                </button>
+                <button type="submit">Submit</button>
+              </Form>
+            )}
+          </Formik>
           <form className={classes.form}>
             <div className={classes.topSection}>
               <div className={classes.customerAndSalesperson}>
@@ -245,7 +390,6 @@ const Invoice = () => {
                   }}
                 />
               </div>
-
               <div className={classes.frequency}>
                 <TextField
                   id="outlined-basic"
@@ -286,16 +430,19 @@ const Invoice = () => {
               </h3>
             </div>
           </form>
-          <Button type="button" onClick={addItemHandler}>
-            Add Item
-          </Button>
-          <Button type="button" onClick={removeItemHandler}>
-            Remove Item
-          </Button>
-          <Button type="button" onClick={submitHandler}>
-            Create Invoice
-          </Button>
-          <button onClick={() => console.log(bulk)}>Click</button>
+          <div className={classes.buttons}>
+            <ButtonGroup>
+              <Button type="button" onClick={addItemHandler}>
+                Add Item
+              </Button>
+              <Button type="button" onClick={removeItemHandler}>
+                Remove Item
+              </Button>
+              <Button type="button" onClick={submitHandler}>
+                Create Invoice
+              </Button>
+            </ButtonGroup>
+          </div>
         </Card>
       </div>
     </div>
