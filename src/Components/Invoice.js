@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { CheckboxWithLabel } from 'formik-material-ui';
-import * as Yup from 'yup';
+import { string, object, array, boolean, number, date } from 'yup';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -14,7 +14,6 @@ import {
   Button,
   ButtonGroup,
 } from '@material-ui/core';
-import yup, { object, string } from 'yup';
 import axios from 'axios';
 import Header from './Header';
 import PageHeader from './PageHeader';
@@ -84,29 +83,19 @@ const useStyles = makeStyles((theme) => ({
   bulk: {
     display: 'flex',
   },
+  errorMessage: {
+    display: 'flex',
+    justifyContent: 'center',
+    color: 'red',
+  },
 }));
 
 const Invoice = () => {
   const classes = useStyles();
-  const [items, setItems] = useState([
-    { id: 1, product: '', price: 0, quantity: 0, serviceDate: '' },
-  ]);
+
   const [customersList, setCustomersList] = useState([]);
   const [salespeopleList, setSalespeopleList] = useState([]);
-  const [customer, setCustomer] = useState();
-  const [salesperson, setSalesperson] = useState();
-  const [frequency, setFrequency] = useState();
-  const [bulk, setBulk] = useState(false);
   const [error, setError] = useState(false);
-  const [total, setTotal] = useState(0);
-
-  useEffect(() => {
-    let totalPrice = 0;
-    items.forEach((item) => {
-      totalPrice += item.price * item.quantity;
-    });
-    setTotal(totalPrice);
-  }, [items]);
 
   const fetchDataHandler = (letters, type) => {
     axios({
@@ -129,11 +118,11 @@ const Invoice = () => {
 
   const submitHandler = () => {
     const invoice = {
-      customer,
-      salesperson,
-      items,
-      frequency,
-      bulk,
+      // customer,
+      // salesperson,
+      // items,
+      // frequency,
+      // bulk,
     };
     axios({
       method: 'post',
@@ -150,62 +139,25 @@ const Invoice = () => {
     });
   };
 
-  const addItemHandler = () => {
-    const itemArray = items.slice();
-    const id = itemArray[itemArray.length - 1].id + 1;
-    itemArray.push({
-      id,
-      product: '',
-      price: 0,
-      quantity: 0,
-      serviceDate: '',
-    });
-    setItems(itemArray);
-  };
-
-  const removeItemHandler = () => {
-    const itemArray = items.slice();
-    if (itemArray.length > 1) {
-      itemArray.pop();
-      setItems(itemArray);
-    }
-  };
-
-  const addProductInfoHandler = (value, key, type) => {
-    const itemArray = JSON.parse(JSON.stringify(items));
-    const indexOfItem = key - 1;
-    switch (type) {
-      case 'product':
-        itemArray[indexOfItem].product = value;
-        setItems(itemArray);
-        break;
-      case 'price':
-        itemArray[indexOfItem].price = value;
-        setItems(itemArray);
-        break;
-      case 'quantity':
-        itemArray[indexOfItem].quantity = value;
-        setItems(itemArray);
-        break;
-      case 'serviceDate':
-        itemArray[indexOfItem].serviceDate = value;
-        setItems(itemArray);
-        break;
-      default:
-        break;
-    }
-  };
-
   const closeErrorHandler = () => {
     setError(false);
   };
 
-  const bulkCheckHandler = () => {
-    setBulk(!bulk);
-  };
-
-  const yupSchema = Yup.object().shape({
-    name: Yup.string().min(25, 'too short'),
+  const yupSchema = object().shape({
+    customer: object().required(),
+    salesperson: object().required(),
+    frequency: number()
+      .typeError('deliveries per year is a required field')
+      .required('deliveries per year is a required field'),
+    bulk: boolean().required(),
+    products: array().of(
+      object().shape({
+        product: object().required(),
+        price: number().required(),
+        quantity: number().required(),
+        serviceDate: date().required(),
+      })
+    ),
   });
 
   return (
@@ -222,8 +174,8 @@ const Invoice = () => {
         <Card className={classes.createInvoiceCard}>
           <Formik
             initialValues={{
-              customer: null,
-              salesperson: null,
+              customer: '',
+              salesperson: '',
               frequency: null,
               bulk: false,
               products: [
@@ -231,15 +183,16 @@ const Invoice = () => {
               ],
             }}
             validationSchema={yupSchema}
-            onSubmit={(values) => {
-              console.log(values);
+            onSubmit={(values, errors) => {
+              console.log(values, errors);
             }}
           >
-            {({ errors, values, handleChange, setFieldValue }) => (
+            {({ errors, values, setFieldValue, touched }) => (
               <Form>
                 <div className={classes.topSection}>
                   <div className={classes.customerAndSalesperson}>
                     <Field
+                      name="customer"
                       component={Autocomplete}
                       options={customersList}
                       getOptionLabel={(option) =>
@@ -261,7 +214,16 @@ const Invoice = () => {
                       }}
                       onChange={(_, value) => setFieldValue('customer', value)}
                     />
+                    <ErrorMessage
+                      render={(message) => (
+                        <div className={classes.errorMessage}>{message}</div>
+                      )}
+                      classname={classes.errorMessage}
+                      name="customer"
+                    />
+                    <div>{errors.customer ? console.log(errors) : null}</div>
                     <Field
+                      name="salesperson"
                       component={Autocomplete}
                       options={salespeopleList}
                       getOptionLabel={(option) =>
@@ -285,6 +247,13 @@ const Invoice = () => {
                         setFieldValue('salesperson', value)
                       }
                     />
+                    <ErrorMessage
+                      render={(message) => (
+                        <div className={classes.errorMessage}>{message}</div>
+                      )}
+                      classname={classes.errorMessage}
+                      name="salesperson"
+                    />
                   </div>
                   <div className={classes.frequencyAndBulk}>
                     <Field
@@ -300,6 +269,13 @@ const Invoice = () => {
                         ),
                       }}
                     />
+                    <ErrorMessage
+                      render={(message) => (
+                        <div className={classes.errorMessage}>{message}</div>
+                      )}
+                      classname={classes.errorMessage}
+                      name="frequency"
+                    />
                     <div className={classes.bulk}>
                       <Field as={Checkbox} name="bulk" checked={values.bulk} />
                       <h3>Bulk Order</h3>
@@ -309,6 +285,7 @@ const Invoice = () => {
                 <div className={classes.productSection}>
                   <Field
                     as={ProductFields}
+                    errors={errors}
                     numberOfItems={values.products}
                     addProductInfo={(value, id, type) => {
                       const itemArray = JSON.parse(

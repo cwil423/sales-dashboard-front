@@ -5,6 +5,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Box, Card, makeStyles, TextField, Button } from '@material-ui/core';
 import axios from 'axios';
 import { useField } from 'formik';
+import ErrorMessage from './ErrorMessage';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,13 +68,17 @@ export default function ProductFields(props) {
               fetchDataHandler(letters, 'products');
             }
           }}
-          // onChange={(event, newValue) => {
-          //   props.addProductInfo(newValue, props.id, 'product');
-          // }}
           onChange={(event, newValue) => {
             props.addProductInfo(newValue, props.id, 'product');
           }}
         />
+        {/* <ErrorMessage
+          render={(message) => (
+            <div className={classes.errorMessage}>{message}</div>
+          )}
+          classname={classes.errorMessage}
+          name="products"
+        /> */}
         {/* <TextField
           id="outlined-basic"
           type="text"
@@ -101,6 +106,21 @@ export default function ProductFields(props) {
             props.addProductInfo(event.target.value, props.id, 'quantity');
           }}
         />
+        <ErrorMessage {...props} />
+        {/* <ErrorMessage
+          render={(message) => (
+            <div className={classes.errorMessage}>{message}</div>
+          )}
+          classname={classes.errorMessage}
+          name="quantity"
+        /> */}
+        <button
+          onClick={
+            props.errors.products ? console.log(props.errors.products[0]) : null
+          }
+        >
+          errors
+        </button>
         <TextField
           className={classes.priceAndQuantity}
           id="outlined-basic"
@@ -115,6 +135,13 @@ export default function ProductFields(props) {
             props.addProductInfo(event.target.value, props.id, 'price');
           }}
         />
+        <ErrorMessage
+          render={(message) => (
+            <div className={classes.errorMessage}>{message}</div>
+          )}
+          classname={classes.errorMessage}
+          name="price"
+        />
         <TextField
           id="outlined-basic"
           type="date"
@@ -127,6 +154,13 @@ export default function ProductFields(props) {
           onChange={(event) => {
             props.addProductInfo(event.target.value, props.id, 'serviceDate');
           }}
+        />
+        <ErrorMessage
+          render={(message) => (
+            <div className={classes.errorMessage}>{message}</div>
+          )}
+          classname={classes.errorMessage}
+          name="date"
         />
       </div>
     </div>
