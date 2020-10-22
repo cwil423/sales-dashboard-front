@@ -34,6 +34,16 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     marginLeft: '0px',
   },
+  errorBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    // backgroundColor: 'red',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+  error: {
+    color: 'red',
+  },
 }));
 
 export default function ProductFields(props) {
@@ -54,31 +64,27 @@ export default function ProductFields(props) {
   return (
     <div>
       <div className={classes.productSection}>
-        <Autocomplete
-          id="combo-box-demo"
-          options={productsList}
-          getOptionLabel={(option) => `${option.product_name}`}
-          style={{ width: 300 }}
-          renderInput={(params) => (
-            <TextField {...params} label="Product" variant="outlined" />
-          )}
-          onInputChange={(event, newInputValue) => {
-            if (newInputValue !== '') {
-              const letters = newInputValue;
-              fetchDataHandler(letters, 'products');
-            }
-          }}
-          onChange={(event, newValue) => {
-            props.addProductInfo(newValue, props.id, 'product');
-          }}
-        />
-        {/* <ErrorMessage
-          render={(message) => (
-            <div className={classes.errorMessage}>{message}</div>
-          )}
-          classname={classes.errorMessage}
-          name="products"
-        /> */}
+        <div className={classes.errorBox}>
+          <Autocomplete
+            id="combo-box-demo"
+            options={productsList}
+            getOptionLabel={(option) => `${option.product_name}`}
+            style={{ width: 300 }}
+            renderInput={(params) => (
+              <TextField {...params} label="Product" variant="outlined" />
+            )}
+            onInputChange={(event, newInputValue) => {
+              if (newInputValue !== '') {
+                const letters = newInputValue;
+                fetchDataHandler(letters, 'products');
+              }
+            }}
+            onChange={(event, newValue) => {
+              props.addProductInfo(newValue, props.id, 'product');
+            }}
+          />
+          <ErrorMessage {...props} type="product" className={classes.error} />
+        </div>
         {/* <TextField
           id="outlined-basic"
           type="text"
@@ -92,56 +98,45 @@ export default function ProductFields(props) {
             props.addProductInfo(event.target.value, props.id, 'serviceDate');
           }}
         /> */}
-        <TextField
-          className={classes.priceAndQuantity}
-          id="outlined-basic"
-          type="number"
-          label="Quantity"
-          variant="outlined"
-          margin="dense"
-          InputProps={{
-            startAdornment: <InputAdornment position="start">#</InputAdornment>,
-          }}
-          onChange={(event) => {
-            props.addProductInfo(event.target.value, props.id, 'quantity');
-          }}
-        />
-        <ErrorMessage {...props} />
-        {/* <ErrorMessage
-          render={(message) => (
-            <div className={classes.errorMessage}>{message}</div>
-          )}
-          classname={classes.errorMessage}
-          name="quantity"
-        /> */}
-        <button
-          onClick={
-            props.errors.products ? console.log(props.errors.products[0]) : null
-          }
-        >
-          errors
-        </button>
-        <TextField
-          className={classes.priceAndQuantity}
-          id="outlined-basic"
-          label="Price"
-          variant="outlined"
-          margin="dense"
-          size="small"
-          InputProps={{
-            startAdornment: <InputAdornment position="start">$</InputAdornment>,
-          }}
-          onChange={(event) => {
-            props.addProductInfo(event.target.value, props.id, 'price');
-          }}
-        />
-        <ErrorMessage
-          render={(message) => (
-            <div className={classes.errorMessage}>{message}</div>
-          )}
-          classname={classes.errorMessage}
-          name="price"
-        />
+        <div className={classes.errorBox}>
+          <TextField
+            className={classes.priceAndQuantity}
+            id="outlined-basic"
+            type="number"
+            label="Quantity"
+            variant="outlined"
+            margin="dense"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">#</InputAdornment>
+              ),
+            }}
+            onChange={(event) => {
+              props.addProductInfo(event.target.value, props.id, 'quantity');
+            }}
+          />
+          <ErrorMessage {...props} type="quantity" className={classes.error} />
+        </div>
+        <div className={classes.errorBox}>
+          <TextField
+            className={classes.priceAndQuantity}
+            id="outlined-basic"
+            label="Price"
+            variant="outlined"
+            margin="dense"
+            size="small"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">$</InputAdornment>
+              ),
+            }}
+            onChange={(event) => {
+              props.addProductInfo(event.target.value, props.id, 'price');
+            }}
+          />
+          <ErrorMessage {...props} type="price" className={classes.error} />
+        </div>
+
         <TextField
           id="outlined-basic"
           type="date"
@@ -154,13 +149,6 @@ export default function ProductFields(props) {
           onChange={(event) => {
             props.addProductInfo(event.target.value, props.id, 'serviceDate');
           }}
-        />
-        <ErrorMessage
-          render={(message) => (
-            <div className={classes.errorMessage}>{message}</div>
-          )}
-          classname={classes.errorMessage}
-          name="date"
         />
       </div>
     </div>

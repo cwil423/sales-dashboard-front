@@ -116,14 +116,7 @@ const Invoice = () => {
     });
   };
 
-  const submitHandler = () => {
-    const invoice = {
-      // customer,
-      // salesperson,
-      // items,
-      // frequency,
-      // bulk,
-    };
+  const submitHandler = (invoice) => {
     axios({
       method: 'post',
       url: 'http://localhost:4000/sales/invoice',
@@ -144,18 +137,29 @@ const Invoice = () => {
   };
 
   const yupSchema = object().shape({
-    customer: object().required(),
-    salesperson: object().required(),
+    customer: object().required().typeError('customer is a required field'),
+    salesperson: object()
+      .required()
+      .typeError('salesperson is a required field'),
     frequency: number()
-      .typeError('deliveries per year is a required field')
-      .required('deliveries per year is a required field'),
+      .typeError('deliveries per year must be a number')
+      .required('deliveries per year is a required field')
+      .min(1, 'deliveries per year must at least be 1'),
     bulk: boolean().required(),
     products: array().of(
       object().shape({
-        product: object().required(),
-        price: number().required(),
-        quantity: number().required(),
-        serviceDate: date().required(),
+        product: object()
+          .required('product is a required field')
+          .typeError('product is a required field'),
+        price: number()
+          .required('price is a required field')
+          .min(1, 'price must at least be 1')
+          .typeError('price must be a number'),
+        quantity: number()
+          .required('quantity is a required')
+          .min(1, 'quantity must at least be 1')
+          .typeError('price must be a number'),
+        serviceDate: date(),
       })
     ),
   });
@@ -176,15 +180,21 @@ const Invoice = () => {
             initialValues={{
               customer: '',
               salesperson: '',
-              frequency: null,
+              frequency: '',
               bulk: false,
               products: [
-                { id: 1, product: '', price: 0, quantity: 0, serviceDate: '' },
+                {
+                  id: 1,
+                  product: '',
+                  price: '',
+                  quantity: '',
+                  serviceDate: '',
+                },
               ],
             }}
             validationSchema={yupSchema}
             onSubmit={(values, errors) => {
-              console.log(values, errors);
+              submitHandler(values);
             }}
           >
             {({ errors, values, setFieldValue, touched }) => (
@@ -221,7 +231,6 @@ const Invoice = () => {
                       classname={classes.errorMessage}
                       name="customer"
                     />
-                    <div>{errors.customer ? console.log(errors) : null}</div>
                     <Field
                       name="salesperson"
                       component={Autocomplete}
@@ -286,6 +295,7 @@ const Invoice = () => {
                   <Field
                     as={ProductFields}
                     errors={errors}
+                    touched={touched}
                     numberOfItems={values.products}
                     addProductInfo={(value, id, type) => {
                       const itemArray = JSON.parse(
@@ -332,8 +342,8 @@ const Invoice = () => {
                         itemArray.push({
                           id,
                           product: '',
-                          price: 0,
-                          quantity: 0,
+                          price: '',
+                          quantity: '',
                           serviceDate: '',
                         });
                         setFieldValue('products', itemArray);
@@ -355,13 +365,9 @@ const Invoice = () => {
                     >
                       Remove Item
                     </Button>
-                    <Button type="submit" onClick={submitHandler}>
-                      Create Invoice
-                    </Button>
+                    <Button type="submit">Create Invoice</Button>
                   </ButtonGroup>
                 </div>
-                <pre>{JSON.stringify(errors, null, 4)}</pre>
-                <pre>{JSON.stringify(values, null, 4)}</pre>
               </Form>
             )}
           </Formik>
