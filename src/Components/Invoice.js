@@ -51,14 +51,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  frequency: {
-    display: 'flex',
-    flexDirection: 'column',
-    // backgroundColor: 'red',
-    paddingRight: '15px',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-  },
+
   totalContainer: {
     justifyContent: 'end',
     // backgroundColor: 'blue',
@@ -76,12 +69,13 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     // backgroundColor: 'red',
-    paddingRight: '15px',
+    // paddingRight: '15px',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
   },
   bulk: {
     display: 'flex',
+    padding: '20px',
   },
   errorMessage: {
     display: 'flex',
@@ -96,6 +90,15 @@ const Invoice = () => {
   const [customersList, setCustomersList] = useState([]);
   const [salespeopleList, setSalespeopleList] = useState([]);
   const [error, setError] = useState(false);
+  const [frequencies, setFrequencies] = useState([
+    { label: 'Weekly', monthsUntilNextDelivery: 1 },
+    { label: 'Bi-weekly', monthsUntilNextDelivery: 1 },
+    { label: 'Monthly', monthsUntilNextDelivery: 1 },
+    { label: 'Bi-Monthly', monthsUntilNextDelivery: 2 },
+    { label: 'Quarterly', monthsUntilNextDelivery: 3 },
+    { label: 'Semi-Annually', monthsUntilNextDelivery: 6 },
+    { label: 'Annually', monthsUntilNextDelivery: 12 },
+  ]);
 
   const fetchDataHandler = (letters, type) => {
     axios({
@@ -141,10 +144,10 @@ const Invoice = () => {
     salesperson: object()
       .required()
       .typeError('salesperson is a required field'),
-    frequency: number()
-      .typeError('deliveries per year must be a number')
-      .required('deliveries per year is a required field')
-      .min(1, 'deliveries per year must at least be 1'),
+    frequency: object()
+      .typeError('sales frequency must is input incorrectly')
+      .required('sales frequency is a required field'),
+    // .min(1, 'sales frequency must at least be 1 character'),
     bulk: boolean().required(),
     products: array().of(
       object().shape({
@@ -265,7 +268,7 @@ const Invoice = () => {
                     />
                   </div>
                   <div className={classes.frequencyAndBulk}>
-                    <Field
+                    {/* <Field
                       as={TextField}
                       name="frequency"
                       type="number"
@@ -277,6 +280,27 @@ const Invoice = () => {
                           <InputAdornment position="start">#</InputAdornment>
                         ),
                       }}
+                    /> */}
+                    <Field
+                      name="salesperson"
+                      component={Autocomplete}
+                      options={frequencies}
+                      getOptionLabel={(option) => option.label}
+                      style={{ width: 300, padding: 15 }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Sales Frequency"
+                          variant="outlined"
+                        />
+                      )}
+                      onInputChange={(event, newInputValue) => {
+                        if (newInputValue !== '') {
+                          const letters = newInputValue;
+                          fetchDataHandler(letters, 'salespeople');
+                        }
+                      }}
+                      onChange={(_, value) => setFieldValue('frequency', value)}
                     />
                     <ErrorMessage
                       render={(message) => (
@@ -286,11 +310,17 @@ const Invoice = () => {
                       name="frequency"
                     />
                     <div className={classes.bulk}>
-                      <Field as={Checkbox} name="bulk" checked={values.bulk} />
+                      <Field
+                        as={Checkbox}
+                        name="bulk"
+                        checked={values.bulk}
+                        color="primary"
+                      />
                       <h3>Bulk Order</h3>
                     </div>
                   </div>
                 </div>
+                <hr />
                 <div className={classes.productSection}>
                   <Field
                     as={ProductFields}
