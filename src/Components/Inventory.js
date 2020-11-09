@@ -14,6 +14,7 @@ import StoreIcon from '@material-ui/icons/Store';
 import SideMenu from './SideMenu';
 import PageHeader from './PageHeader';
 import Header from './Header';
+import InventoryForecast from './InventoryForecast';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,43 +26,18 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-around',
   },
   cards: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    alignItems: 'center',
     margin: '35px',
-    height: '300px',
+    height: '400px',
     width: '60%',
-  },
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: 120,
   },
 }));
 
 export default function Inventory() {
   const classes = useStyles();
-  const currentMonth = format(new Date(), 'MM');
-  const [inventory, setInventory] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
-
-  const inventoryData = inventory.map((item) => {
-    return (
-      <div>
-        <Typography>{item.product_name}</Typography>
-        <Typography>{item.number_of_filters}</Typography>
-      </div>
-    );
-  });
-  console.log(inventoryData);
-
-  useEffect(() => {
-    axios({
-      method: 'POST',
-      url: 'http://localhost:4000/inventory',
-      data: { month: selectedMonth },
-    }).then((response) => setInventory(response.data));
-  }, [selectedMonth]);
-
-  const handleChange = (event) => {
-    setSelectedMonth(event.target.value);
-  };
 
   return (
     <div className={classes.root}>
@@ -74,25 +50,7 @@ export default function Inventory() {
       />
       <div className={classes.cardArea}>
         <Card className={classes.cards}>
-          <FormControl className={classes.formControl}>
-            <InputLabel id="demo-simple-select-label">Month</InputLabel>
-            <Select onChange={handleChange}>
-              <MenuItem value="01">January</MenuItem>
-              <MenuItem value="02">February</MenuItem>
-              <MenuItem value="03">March</MenuItem>
-              <MenuItem value="04">April</MenuItem>
-              <MenuItem value="05">May</MenuItem>
-              <MenuItem value="06">June</MenuItem>
-              <MenuItem value="07">July</MenuItem>
-              <MenuItem value="08">August</MenuItem>
-              <MenuItem value="09">September</MenuItem>
-              <MenuItem value="10">October</MenuItem>
-              <MenuItem value="11">November</MenuItem>
-              <MenuItem value="12">December</MenuItem>
-            </Select>
-          </FormControl>
-
-          {inventoryData.length === 0 ? <h1>No Data</h1> : inventoryData}
+          <InventoryForecast />
         </Card>
       </div>
     </div>
