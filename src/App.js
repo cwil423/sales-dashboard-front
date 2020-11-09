@@ -7,6 +7,7 @@ import Login from './Components/Login';
 import DisplayPage from './Components/DisplayPage';
 import Invoice from './Components/Invoice';
 import Home from './Components/Home';
+import Inventory from './Components/Inventory';
 
 function App() {
   const themeColor = useSelector((state) => state.theme);
@@ -28,6 +29,7 @@ function App() {
             <Route path="/login" component={Login} />
             <Route path="/home" component={Home} />
             <Route path="/invoice" component={Invoice} />
+            <Route path="/inventory" component={Inventory} />
             {/* <DisplayPage /> */}
           </div>
         </Switch>
