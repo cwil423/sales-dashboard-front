@@ -8,9 +8,12 @@ import {
   FormControl,
   InputLabel,
   TextField,
+  ListItem,
+  List,
 } from '@material-ui/core';
 import axios from 'axios';
 import { format } from 'date-fns';
+import SimpleTable from './SimpleTable';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
   filters: {
     margin: theme.spacing(1),
   },
+  list: {},
 }));
 
 export default function InventoryForecast() {
@@ -50,16 +54,6 @@ export default function InventoryForecast() {
     setSelectedMonth(event.target.value);
   };
 
-  const inventoryData = inventory.map((item) => {
-    return (
-      <div>
-        <Typography className={classes.filters}>
-          {item.product_name}: {item.sum} Filters
-        </Typography>
-      </div>
-    );
-  });
-
   return (
     <div className={classes.root}>
       <FormControl>
@@ -73,8 +67,7 @@ export default function InventoryForecast() {
           }}
         />
       </FormControl>
-
-      {inventoryData.length === 0 ? <h1>No Data</h1> : inventoryData}
+      <SimpleTable items={inventory} />
     </div>
   );
 }
