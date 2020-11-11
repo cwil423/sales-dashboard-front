@@ -10,10 +10,11 @@ import {
   TextField,
   ListItem,
   List,
+  Divider,
 } from '@material-ui/core';
 import axios from 'axios';
 import { format } from 'date-fns';
-import SimpleTable from './SimpleTable';
+import InventoryForecastTable from './InventoryForecastTable';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,6 +24,13 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     margin: '35px',
   },
+  topSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '75%',
+  },
   formControl: {
     margin: theme.spacing(1),
     width: theme.spacing(24),
@@ -31,7 +39,13 @@ const useStyles = makeStyles((theme) => ({
   filters: {
     margin: theme.spacing(1),
   },
-  list: {},
+  inventoryHeader: {
+    marginBottom: '10px',
+    paddingBottom: '10px',
+  },
+  monthBox: {
+    marginBottom: '20px',
+  },
 }));
 
 export default function InventoryForecast() {
@@ -56,18 +70,34 @@ export default function InventoryForecast() {
 
   return (
     <div className={classes.root}>
-      <FormControl>
-        <TextField
-          type="month"
-          variant="outlined"
-          defaultValue={`${currentYear}-${currentMonth}`}
-          onChange={(e) => {
-            setSelectedYear(e.target.value.substring(0, 4));
-            setSelectedMonth(e.target.value.substring(5, 7));
-          }}
-        />
-      </FormControl>
-      <SimpleTable items={inventory} />
+      <div className={classes.topSection}>
+        <div>
+          <Typography className={classes.inventoryHeader}>
+            Inventory Requirements by Month
+          </Typography>
+        </div>
+        <div className={classes.monthBox}>
+          <FormControl>
+            <TextField
+              type="month"
+              variant="outlined"
+              defaultValue={`${currentYear}-${currentMonth}`}
+              onChange={(e) => {
+                setSelectedYear(e.target.value.substring(0, 4));
+                setSelectedMonth(e.target.value.substring(5, 7));
+              }}
+            />
+          </FormControl>
+        </div>
+      </div>
+
+      <InventoryForecastTable
+        headers={{
+          mainHeader: 'Filter Model',
+          otherHeaders: ['Number Required'],
+        }}
+        items={inventory}
+      />
     </div>
   );
 }

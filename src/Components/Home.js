@@ -16,6 +16,7 @@ import Header from './Header';
 import SideMenu from './SideMenu';
 import Inventory from './Inventory';
 import InventoryForecast from './InventoryForecast';
+import InventoryForecastTable from './InventoryForecastTable';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,14 +49,37 @@ const useStyles = makeStyles((theme) => ({
     margin: '35px',
     // backgroundColor: 'green',
   },
+  monthsAndSums: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  weightedCard: {
+    display: 'flex',
+    width: '100%',
+    margin: '35px',
+  },
+  weightedContent: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  weightedHeader: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '300px',
+  },
   inventoryCard: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     width: '100%',
-    // height: '450px',
+
     margin: '35px',
-    // backgroundColor: 'green',
   },
   formControl: {
     margin: theme.spacing(1),
@@ -65,94 +89,27 @@ const useStyles = makeStyles((theme) => ({
   filters: {
     margin: theme.spacing(1),
   },
-  weightedCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
-  weightedContent: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
 }));
 
 const Home = () => {
-  const [invoiceTotal, setInvoiceTotal] = useState(0);
   const [invoiceTotalThisMonth, setInvoiceTotalThisMonth] = useState(0);
-  const [weightedSales, setWeightedSales] = useState([]);
-  const [months, setMonths] = useState([]);
   const classes = useStyles();
-  const currentMonth = format(new Date(), 'MM');
-  const [inventory, setInventory] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
-
-  // useEffect(() => {
-  //   axios({
-  //     method: 'POST',
-  //     url: 'http://localhost:4000/inventory',
-  //     data: { month: selectedMonth },
-  //   }).then((response) => setInventory(response.data));
-  // }, [selectedMonth]);
-
-  useEffect(() => {
-    axios({
-      method: 'GET',
-      url: 'http://localhost:4000/sales/total',
-    }).then((response) => setInvoiceTotal(response.data[0].sum));
-  }, []);
-
-  // useEffect(() => {
-  //   axios({
-  //     method: 'GET',
-  //     url: 'http://localhost:4000/sales/thisMonth',
-  //   }).then((response) => {
-  //     setInvoiceTotalThisMonth(response.data.sum);
-  //   });
-  // }, []);
+  const [monthAndWeightedSales, setMonthAndWeightedSales] = useState([]);
 
   useEffect(() => {
     axios({
       method: 'GET',
       url: 'http://localhost:4000/sales/weighted',
     }).then((response) => {
-      setWeightedSales(response.data[0]);
-      setMonths(response.data[1]);
+      const months = response.data[1];
+      const sums = response.data[0];
+      const monthAndSum = [];
+      for (let i = 0; i < response.data[0].length; i++) {
+        monthAndSum.push({ month: months[i].Month, sum: sums[i] });
+      }
+      setMonthAndWeightedSales(monthAndSum);
     });
   }, []);
-
-  // const handleChange = (event) => {
-  //   setSelectedMonth(event.target.value);
-  // };
-
-  const weightedSalesNumbers = weightedSales.map((amount) => {
-    if (amount === null) {
-      return null;
-    }
-    // return <h2 className={classes.weightedContent}>{amount}</h2>;
-    return <Typography variant="h5">{amount}</Typography>;
-  });
-
-  const weightedMonths = months.map((month) => {
-    if (month === null) {
-      return null;
-    }
-    // return <h2 className={classes.weightedContent}>{month.Month}</h2>;
-    return <Typography variant="h5">{month.Month}</Typography>;
-  });
-
-  // const inventoryData = inventory.map((item) => {
-  //   return (
-  //     <div>
-  //       <Typography className={classes.filters}>
-  //         {item.product_name}: {item.sum} Filters
-  //       </Typography>
-  //     </div>
-  //   );
-  // });
 
   return (
     <div className={classes.root}>
@@ -167,14 +124,19 @@ const Home = () => {
         <div className={classes.cardGroupOne}>
           <Card className={classes.card}>
             <div className={classes.weightedCard}>
-              <Typography variant="h4">
-                Weigthed Sales for Upcoming Months
-              </Typography>
-
-              <div className={classes.weightedContent}>
-                {weightedSalesNumbers}
+              <div className={classes.weightedHeader}>
+                <Typography type="h4">Weighted Sales</Typography>
               </div>
-              <div className={classes.weightedContent}>{weightedMonths}</div>
+              <div className={classes.weightedContent}>
+                {monthAndWeightedSales.map((element) => {
+                  return (
+                    <div className={classes.monthsAndSums}>
+                      <Typography>{element.month}</Typography>
+                      <Typography>{element.sum}</Typography>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </Card>
         </div>
@@ -183,8 +145,7 @@ const Home = () => {
             <InventoryForecast />
           </Card>
           <Card className={classes.card}>
-            <h1>Invoices from this month: {invoiceTotalThisMonth}</h1>
-            <h3></h3>
+            <h1>Commission info goes here</h1>
           </Card>
         </div>
       </div>

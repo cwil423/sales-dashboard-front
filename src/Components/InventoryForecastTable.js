@@ -24,17 +24,19 @@ export default function SimpleTable(props) {
   const rows = props.items.map((item) => {
     return createData(item.product_name, item.sum);
   });
-  console.log(rows);
 
   return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
+    <TableContainer style={{ maxHeight: 200 }}>
+      <Table className={classes.table} aria-label="simple table" stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell>Filter Model</TableCell>
-            <TableCell align="right">Number Required</TableCell>
+            <TableCell>{props.headers.mainHeader}</TableCell>
+            {props.headers.otherHeaders.map((header) => (
+              <TableCell align="right">{header}</TableCell>
+            ))}
           </TableRow>
         </TableHead>
+
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.name}>
