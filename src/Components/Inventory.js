@@ -88,9 +88,6 @@ export default function Inventory() {
       />
       <div className={classes.cardArea}>
         <Card className={classes.cards}>
-          <InventoryForecast />
-        </Card>
-        <Card className={classes.cards}>
           <Typography className={classes.header}>
             Enter Recieved Inventory
           </Typography>
@@ -184,6 +181,9 @@ export default function Inventory() {
               </Form>
             )}
           </Formik>
+        </Card>
+        <Card className={classes.cards}>
+          <InventoryForecast />
         </Card>
       </div>
     </div>

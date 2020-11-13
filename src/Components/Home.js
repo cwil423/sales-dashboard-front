@@ -8,6 +8,8 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  TextField,
+  Divider,
 } from '@material-ui/core';
 import axios from 'axios';
 import { format } from 'date-fns';
@@ -32,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-around',
     width: '100%',
-    height: '300px',
+    height: '350px',
     // backgroundColor: 'red',
   },
   cardGroupTwo: {
@@ -58,6 +60,8 @@ const useStyles = makeStyles((theme) => ({
   },
   weightedCard: {
     display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
     width: '100%',
     margin: '35px',
   },
@@ -69,10 +73,13 @@ const useStyles = makeStyles((theme) => ({
   },
   weightedHeader: {
     display: 'flex',
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     alignItems: 'center',
-    width: '300px',
+    paddingRight: '150px',
+    paddingLeft: '150px',
   },
+  monthBox: {},
   inventoryCard: {
     display: 'flex',
     flexDirection: 'column',
@@ -95,6 +102,12 @@ const Home = () => {
   const [invoiceTotalThisMonth, setInvoiceTotalThisMonth] = useState(0);
   const classes = useStyles();
   const [monthAndWeightedSales, setMonthAndWeightedSales] = useState([]);
+  const currentMonth = format(new Date(), 'MM');
+  const currentYear = format(new Date(), 'yyyy');
+  const [selectedStartMonth, setSelectedStartMonth] = useState(currentMonth);
+  const [selectedStartYear, setSelectedStartYear] = useState(currentYear);
+  const [selectedEndMonth, setSelectedEndMonth] = useState(currentMonth);
+  const [selectedEndYear, setSelectedEndYear] = useState(currentYear);
 
   useEffect(() => {
     axios({
@@ -111,6 +124,14 @@ const Home = () => {
     });
   }, []);
 
+  // useEffect(() => {
+  //   axios({
+  //     method: 'POST',
+  //     url: 'http://localhost:4000/inventory',
+  //     data: { month: selectedMonth, year: selectedYear },
+  //   }).then((response) => setInventory(response.data));
+  // }, [selectedMonth]);
+
   return (
     <div className={classes.root}>
       <SideMenu />
@@ -126,7 +147,35 @@ const Home = () => {
             <div className={classes.weightedCard}>
               <div className={classes.weightedHeader}>
                 <Typography type="h4">Weighted Sales</Typography>
+                <div className={classes.monthBox}>
+                  <FormControl>
+                    <TextField
+                      type="month"
+                      variant="outlined"
+                      defaultValue={`${currentYear}-${currentMonth}`}
+                      onChange={(e) => {
+                        setSelectedStartYear(e.target.value.substring(0, 4));
+                        setSelectedStartMonth(e.target.value.substring(5, 7));
+                      }}
+                    />
+                  </FormControl>
+                </div>
+                <Typography>To</Typography>
+                <div className={classes.monthBox}>
+                  <FormControl>
+                    <TextField
+                      type="month"
+                      variant="outlined"
+                      defaultValue={`${currentYear}-${currentMonth}`}
+                      onChange={(e) => {
+                        setSelectedEndYear(e.target.value.substring(0, 4));
+                        setSelectedEndMonth(e.target.value.substring(5, 7));
+                      }}
+                    />
+                  </FormControl>
+                </div>
               </div>
+              <Divider />
               <div className={classes.weightedContent}>
                 {monthAndWeightedSales.map((element) => {
                   return (

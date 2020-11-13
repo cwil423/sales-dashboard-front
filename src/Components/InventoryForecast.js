@@ -54,9 +54,9 @@ export default function InventoryForecast() {
   const classes = useStyles();
   const currentMonth = format(new Date(), 'MM');
   const currentYear = format(new Date(), 'yyyy');
-  const [inventory, setInventory] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [inventory, setInventory] = useState([]);
 
   useEffect(() => {
     axios({
@@ -65,10 +65,6 @@ export default function InventoryForecast() {
       data: { month: selectedMonth, year: selectedYear },
     }).then((response) => setInventory(response.data));
   }, [selectedMonth]);
-
-  const handleChange = (event) => {
-    setSelectedMonth(event.target.value);
-  };
 
   return (
     <div className={classes.root}>
