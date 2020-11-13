@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-around',
     width: '100%',
-    height: '450px',
+    // height: '450px',
     // backgroundColor: 'blue',
   },
   card: {

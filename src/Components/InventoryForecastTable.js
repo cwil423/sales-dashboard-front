@@ -26,7 +26,7 @@ export default function SimpleTable(props) {
   });
 
   return (
-    <TableContainer style={{ maxHeight: 200 }}>
+    <TableContainer>
       <Table className={classes.table} aria-label="simple table" stickyHeader>
         <TableHead>
           <TableRow>

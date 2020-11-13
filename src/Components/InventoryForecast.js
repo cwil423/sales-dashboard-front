@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
   topSection: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-around',
     alignItems: 'center',
     width: '75%',
   },
@@ -45,6 +44,9 @@ const useStyles = makeStyles((theme) => ({
   },
   monthBox: {
     marginBottom: '20px',
+  },
+  forecastTable: {
+    width: '80%',
   },
 }));
 
@@ -90,14 +92,16 @@ export default function InventoryForecast() {
           </FormControl>
         </div>
       </div>
-
-      <InventoryForecastTable
-        headers={{
-          mainHeader: 'Filter Model',
-          otherHeaders: ['Number Required'],
-        }}
-        items={inventory}
-      />
+      <div className={classes.forecastTable}>
+        <InventoryForecastTable
+          className={classes.forecastTable}
+          headers={{
+            mainHeader: 'Filter Model',
+            otherHeaders: ['Number Required'],
+          }}
+          items={inventory}
+        />
+      </div>
     </div>
   );
 }

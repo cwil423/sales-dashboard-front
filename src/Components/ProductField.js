@@ -15,20 +15,13 @@ const useStyles = makeStyles((theme) => ({
   invoice: {
     display: 'flex',
   },
-  createInvoiceCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    margin: theme.spacing(4),
-    padding: theme.spacing(2),
-    width: '100%',
-  },
   priceAndQuantity: {
-    width: '100px',
+    width: '150px',
   },
   productSection: {
     display: 'flex',
     padding: theme.spacing(2),
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
   },
   customerAndSalesperson: {
     display: 'flex',
@@ -117,39 +110,42 @@ export default function ProductFields(props) {
           />
           <ErrorMessage {...props} type="quantity" className={classes.error} />
         </div>
-        <div className={classes.errorBox}>
+        {!props.shortened ? (
+          <div className={classes.errorBox}>
+            <TextField
+              className={classes.priceAndQuantity}
+              id="outlined-basic"
+              label="Price"
+              variant="outlined"
+              margin="dense"
+              size="small"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
+              onChange={(event) => {
+                props.addProductInfo(event.target.value, props.id, 'price');
+              }}
+            />
+            <ErrorMessage {...props} type="price" className={classes.error} />
+          </div>
+        ) : null}
+        {!props.shortened ? (
           <TextField
-            className={classes.priceAndQuantity}
             id="outlined-basic"
-            label="Price"
+            type="date"
+            label="Service Date"
             variant="outlined"
             margin="dense"
-            size="small"
             InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">$</InputAdornment>
-              ),
+              startAdornment: <InputAdornment position="start" />,
             }}
             onChange={(event) => {
-              props.addProductInfo(event.target.value, props.id, 'price');
+              props.addProductInfo(event.target.value, props.id, 'serviceDate');
             }}
           />
-          <ErrorMessage {...props} type="price" className={classes.error} />
-        </div>
-
-        <TextField
-          id="outlined-basic"
-          type="date"
-          label="Service Date"
-          variant="outlined"
-          margin="dense"
-          InputProps={{
-            startAdornment: <InputAdornment position="start" />,
-          }}
-          onChange={(event) => {
-            props.addProductInfo(event.target.value, props.id, 'serviceDate');
-          }}
-        />
+        ) : null}
       </div>
     </div>
   );

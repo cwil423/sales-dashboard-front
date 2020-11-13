@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { CheckboxWithLabel } from 'formik-material-ui';
-import { string, object, array, boolean, number, date } from 'yup';
+
+import { object, array, boolean, number, date } from 'yup';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import InputAdornment from '@material-ui/core/InputAdornment';
+
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
-  FormControlLabel,
   Checkbox,
   Card,
   makeStyles,
@@ -43,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   topSection: {
     display: 'flex',
     justifyContent: 'space-between',
-    marginBottom: '50px',
+    // marginBottom: '25px',
     // backgroundColor: 'teal',
   },
   customerAndSalesperson: {
@@ -159,7 +158,7 @@ const Invoice = () => {
           .min(1, 'price must at least be 1')
           .typeError('price must be a number'),
         quantity: number()
-          .required('quantity is a required')
+          .required('quantity is a required field')
           .min(1, 'quantity must at least be 1')
           .typeError('price must be a number'),
         serviceDate: date(),
@@ -268,19 +267,6 @@ const Invoice = () => {
                     />
                   </div>
                   <div className={classes.frequencyAndBulk}>
-                    {/* <Field
-                      as={TextField}
-                      name="frequency"
-                      type="number"
-                      label="Deliveries per year"
-                      variant="outlined"
-                      margin="dense"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">#</InputAdornment>
-                        ),
-                      }}
-                    /> */}
                     <Field
                       name="salesperson"
                       component={Autocomplete}
@@ -361,7 +347,7 @@ const Invoice = () => {
                   </h3>
                 </div>
                 <div className={classes.buttons}>
-                  <ButtonGroup>
+                  <ButtonGroup variant="text">
                     <Button
                       type="button"
                       onClick={() => {
