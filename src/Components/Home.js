@@ -101,7 +101,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Home = () => {
-  const [invoiceTotalThisMonth, setInvoiceTotalThisMonth] = useState(0);
   const classes = useStyles();
   const [monthAndWeightedSales, setMonthAndWeightedSales] = useState([]);
   const currentMonth = format(new Date(), 'MM');
@@ -115,6 +114,12 @@ const Home = () => {
     axios({
       method: 'GET',
       url: 'http://localhost:4000/sales/weighted',
+      data: {
+        startMonth: selectedStartMonth,
+        startYear: selectedStartYear,
+        endMonth: selectedEndMonth,
+        endYear: selectedEndYear,
+      },
     }).then((response) => {
       const months = response.data[1];
       const sums = response.data[0];
@@ -126,13 +131,41 @@ const Home = () => {
     });
   }, []);
 
-  // useEffect(() => {
-  //   axios({
-  //     method: 'POST',
-  //     url: 'http://localhost:4000/inventory',
-  //     data: { month: selectedMonth, year: selectedYear },
-  //   }).then((response) => setInventory(response.data));
-  // }, [selectedMonth]);
+  useEffect(() => {
+    // This whole section gets the month and year six months from now
+    const months = [
+      '01',
+      '02',
+      '03',
+      '04',
+      '05',
+      '06',
+      '07',
+      '08',
+      '09',
+      '10',
+      '11',
+      '12',
+    ];
+
+    const indexOfCurrentMonth = months.indexOf(currentMonth);
+    const nextSixMonths = [];
+    let updatedYear = null;
+
+    for (let i = 0; i < 6; i++) {
+      let indexOfNext = indexOfCurrentMonth + i;
+      if (nextSixMonths.includes('12')) {
+        indexOfNext -= 12;
+        updatedYear = parseInt(selectedStartYear) + 1;
+        console.log(updatedYear);
+      }
+      nextSixMonths.push(months[indexOfNext]);
+    }
+    setSelectedEndMonth(nextSixMonths[5]);
+    if (updatedYear) {
+      setSelectedEndYear(updatedYear.toString());
+    }
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -155,7 +188,7 @@ const Home = () => {
                       size="small"
                       type="month"
                       variant="outlined"
-                      defaultValue={`${currentYear}-${currentMonth}`}
+                      value={`${selectedStartYear}-${selectedStartMonth}`}
                       onChange={(e) => {
                         setSelectedStartYear(e.target.value.substring(0, 4));
                         setSelectedStartMonth(e.target.value.substring(5, 7));
@@ -170,7 +203,7 @@ const Home = () => {
                       size="small"
                       type="month"
                       variant="outlined"
-                      defaultValue={`${currentYear}-${currentMonth}`}
+                      value={`${selectedEndYear}-${selectedEndMonth}`}
                       onChange={(e) => {
                         setSelectedEndYear(e.target.value.substring(0, 4));
                         setSelectedEndMonth(e.target.value.substring(5, 7));
