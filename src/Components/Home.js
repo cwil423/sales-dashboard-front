@@ -79,7 +79,6 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: '150px',
     paddingLeft: '150px',
   },
-  monthBox: {},
   inventoryCard: {
     display: 'flex',
     flexDirection: 'column',
@@ -95,6 +94,9 @@ const useStyles = makeStyles((theme) => ({
   },
   filters: {
     margin: theme.spacing(1),
+  },
+  divider: {
+    width: '100px',
   },
 }));
 
@@ -147,9 +149,10 @@ const Home = () => {
             <div className={classes.weightedCard}>
               <div className={classes.weightedHeader}>
                 <Typography type="h4">Weighted Sales</Typography>
-                <div className={classes.monthBox}>
+                <div>
                   <FormControl>
                     <TextField
+                      size="small"
                       type="month"
                       variant="outlined"
                       defaultValue={`${currentYear}-${currentMonth}`}
@@ -161,9 +164,10 @@ const Home = () => {
                   </FormControl>
                 </div>
                 <Typography>To</Typography>
-                <div className={classes.monthBox}>
+                <div>
                   <FormControl>
                     <TextField
+                      size="small"
                       type="month"
                       variant="outlined"
                       defaultValue={`${currentYear}-${currentMonth}`}
@@ -181,6 +185,7 @@ const Home = () => {
                   return (
                     <div className={classes.monthsAndSums}>
                       <Typography>{element.month}</Typography>
+                      <Divider className={classes.divider} />
                       <Typography>{element.sum}</Typography>
                     </div>
                   );

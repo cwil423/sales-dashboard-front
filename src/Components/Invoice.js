@@ -12,6 +12,7 @@ import {
   TextField,
   Button,
   ButtonGroup,
+  Typography,
 } from '@material-ui/core';
 import axios from 'axios';
 import Header from './Header';
@@ -74,6 +75,7 @@ const useStyles = makeStyles((theme) => ({
   },
   bulk: {
     display: 'flex',
+    alignItems: 'center',
     padding: '20px',
   },
   errorMessage: {
@@ -204,6 +206,7 @@ const Invoice = () => {
                 <div className={classes.topSection}>
                   <div className={classes.customerAndSalesperson}>
                     <Field
+                      size="small"
                       name="customer"
                       component={Autocomplete}
                       options={customersList}
@@ -235,6 +238,7 @@ const Invoice = () => {
                     />
                     <Field
                       name="salesperson"
+                      size="small"
                       component={Autocomplete}
                       options={salespeopleList}
                       getOptionLabel={(option) =>
@@ -269,6 +273,7 @@ const Invoice = () => {
                   <div className={classes.frequencyAndBulk}>
                     <Field
                       name="salesperson"
+                      size="small"
                       component={Autocomplete}
                       options={frequencies}
                       getOptionLabel={(option) => option.label}
@@ -302,7 +307,7 @@ const Invoice = () => {
                         checked={values.bulk}
                         color="primary"
                       />
-                      <h3>Bulk Order</h3>
+                      <Typography>Bulk Order</Typography>
                     </div>
                   </div>
                 </div>

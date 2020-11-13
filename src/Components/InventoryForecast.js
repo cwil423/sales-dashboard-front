@@ -77,6 +77,7 @@ export default function InventoryForecast() {
         <div className={classes.monthBox}>
           <FormControl>
             <TextField
+              size="small"
               type="month"
               variant="outlined"
               defaultValue={`${currentYear}-${currentMonth}`}

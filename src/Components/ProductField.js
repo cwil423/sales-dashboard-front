@@ -59,6 +59,7 @@ export default function ProductFields(props) {
       <div className={classes.productSection}>
         <div className={classes.errorBox}>
           <Autocomplete
+            size="small"
             id="combo-box-demo"
             options={productsList}
             getOptionLabel={(option) => `${option.product_name}`}
@@ -98,7 +99,7 @@ export default function ProductFields(props) {
             type="number"
             label="Quantity"
             variant="outlined"
-            margin="dense"
+            size="small"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">#</InputAdornment>
@@ -117,7 +118,6 @@ export default function ProductFields(props) {
               id="outlined-basic"
               label="Price"
               variant="outlined"
-              margin="dense"
               size="small"
               InputProps={{
                 startAdornment: (
@@ -134,10 +134,10 @@ export default function ProductFields(props) {
         {!props.shortened ? (
           <TextField
             id="outlined-basic"
+            size="small"
             type="date"
             label="Service Date"
             variant="outlined"
-            margin="dense"
             InputProps={{
               startAdornment: <InputAdornment position="start" />,
             }}
