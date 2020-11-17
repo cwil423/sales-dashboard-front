@@ -48,15 +48,16 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     width: '100%',
     // height: '300px',
-    margin: '35px',
+    margin: '30px',
     // backgroundColor: 'green',
   },
   monthsAndSums: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    // justifyContent: 'space-around',
     width: '100%',
+    // backgroundColor: 'red',
   },
   weightedCard: {
     display: 'flex',
@@ -98,6 +99,13 @@ const useStyles = makeStyles((theme) => ({
   divider: {
     width: '100px',
   },
+  productSection: {
+    // backgroundColor: 'red',
+  },
+  item: {
+    display: 'flex',
+    // width: '100px',
+  },
 }));
 
 const Home = () => {
@@ -109,6 +117,8 @@ const Home = () => {
   const [selectedStartYear, setSelectedStartYear] = useState(currentYear);
   const [selectedEndMonth, setSelectedEndMonth] = useState(currentMonth);
   const [selectedEndYear, setSelectedEndYear] = useState(currentYear);
+  const [monthAndForecast, setMonthAndForecast] = useState([]);
+  const [monthAndInventory, setMonthAndInventory] = useState([]);
 
   useEffect(() => {
     axios({
@@ -128,6 +138,40 @@ const Home = () => {
         monthAndSum.push({ month: months[i].Month, sum: sums[i] });
       }
       setMonthAndWeightedSales(monthAndSum);
+    });
+  }, []);
+
+  useEffect(() => {
+    axios({
+      method: 'GET',
+      url: 'http://localhost:4000/sales/forecast',
+    }).then((response) => {
+      const months = response.data[1];
+      const sums = response.data[0];
+      const monthAndSum = [];
+      for (let i = 0; i < response.data[0].length; i++) {
+        monthAndSum.push({ month: months[i].Month, sum: sums[i] });
+      }
+      setMonthAndForecast(monthAndSum);
+    });
+  }, []);
+
+  useEffect(() => {
+    axios({
+      method: 'GET',
+      url: 'http://localhost:4000/inventory/forecast',
+    }).then((response) => {
+      const months = response.data[1];
+      const inventory = response.data[0];
+      const monthAndInventory = [];
+      for (let i = 0; i < response.data[0].length; i++) {
+        monthAndInventory.push({
+          month: months[i].Month,
+          inventory: inventory[i],
+        });
+      }
+      setMonthAndInventory(monthAndInventory);
+      console.log(monthAndInventory);
     });
   }, []);
 
@@ -196,7 +240,7 @@ const Home = () => {
                     />
                   </FormControl>
                 </div>
-                <Typography>To</Typography>
+                <Typography type="h4">To</Typography>
                 <div>
                   <FormControl>
                     <TextField
@@ -227,6 +271,59 @@ const Home = () => {
             </div>
           </Card>
         </div>
+        <div className={classes.cardGroupOne}>
+          <Card className={classes.card}>
+            <div className={classes.weightedCard}>
+              <div className={classes.weightedHeader}>
+                <Typography>Projected Sales</Typography>
+              </div>
+              <Divider />
+              <div className={classes.weightedContent}>
+                {monthAndForecast.map((element) => {
+                  return (
+                    <div className={classes.monthsAndSums}>
+                      <Typography>{element.month}</Typography>
+                      <Divider className={classes.divider} />
+                      <Typography>{element.sum}</Typography>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Card>
+        </div>
+        <div className={classes.cardGroupOne}>
+          <Card className={classes.card}>
+            <div className={classes.weightedCard}>
+              <div className={classes.weightedHeader}>
+                <Typography>Projected Inventory Requirements</Typography>
+              </div>
+              <Divider />
+              <div className={classes.weightedContent}>
+                {monthAndInventory.map((element) => {
+                  return (
+                    <div className={classes.monthsAndSums}>
+                      <Typography>{element.month}</Typography>
+                      <Divider className={classes.divider} />
+                      <div className={classes.productSection}>
+                        {element.inventory.map((items) => {
+                          return (
+                            <div className={classes.item}>
+                              <Typography>{items.product_name}:</Typography>
+                              &emsp;
+                              <Typography>{items.quantity}</Typography>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Card>
+        </div>
+
         <div className={classes.cardGroupTwo}>
           <Card className={classes.inventoryCard}>
             <InventoryForecast />

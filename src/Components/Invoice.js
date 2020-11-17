@@ -92,8 +92,8 @@ const Invoice = () => {
   const [salespeopleList, setSalespeopleList] = useState([]);
   const [error, setError] = useState(false);
   const [frequencies, setFrequencies] = useState([
-    { label: 'Weekly', monthsUntilNextDelivery: 1 },
-    { label: 'Bi-weekly', monthsUntilNextDelivery: 1 },
+    { label: 'Weekly', weeksUntilNextDelivery: 1 },
+    { label: 'Bi-weekly', weeksUntilNextDelivery: 2 },
     { label: 'Monthly', monthsUntilNextDelivery: 1 },
     { label: 'Bi-Monthly', monthsUntilNextDelivery: 2 },
     { label: 'Quarterly', monthsUntilNextDelivery: 3 },
@@ -146,8 +146,8 @@ const Invoice = () => {
       .required()
       .typeError('salesperson is a required field'),
     frequency: object()
-      .typeError('sales frequency must is input incorrectly')
-      .required('sales frequency is a required field'),
+      .typeError('sale frequency must is input incorrectly')
+      .required('sale frequency is a required field'),
     // .min(1, 'sales frequency must at least be 1 character'),
     bulk: boolean().required(),
     products: array().of(
@@ -281,7 +281,7 @@ const Invoice = () => {
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          label="Sales Frequency"
+                          label="Sale Frequency"
                           variant="outlined"
                         />
                       )}

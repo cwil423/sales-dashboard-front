@@ -45,7 +45,7 @@ const SideMenu = () => {
       </div>
       <Divider />
       <List>
-        <Link to="/home" className={classes.links}>
+        <Link to="/" className={classes.links}>
           <ListItem button key={1}>
             <ListItemIcon>
               <HomeIcon />

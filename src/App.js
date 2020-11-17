@@ -25,9 +25,9 @@ function App() {
         <CssBaseline />
         <Switch>
           <div className="app">
-            <Route exact path="/" component={DisplayPage} />
+            <Route exact path="/" component={Home} />
             <Route path="/login" component={Login} />
-            <Route path="/home" component={Home} />
+            {/* <Route path="/home" component={Home} /> */}
             <Route path="/invoice" component={Invoice} />
             <Route path="/inventory" component={Inventory} />
             {/* <DisplayPage /> */}
