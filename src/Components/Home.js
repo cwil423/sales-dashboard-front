@@ -135,7 +135,11 @@ const Home = () => {
       const sums = response.data[0];
       const monthAndSum = [];
       for (let i = 0; i < response.data[0].length; i++) {
-        monthAndSum.push({ month: months[i].Month, sum: sums[i] });
+        if (months[i]) {
+          monthAndSum.unshift({ month: months[i].Month, sum: sums[i] });
+        } else {
+          monthAndSum.unshift({ month: null, sum: sums[i] });
+        }
       }
       setMonthAndWeightedSales(monthAndSum);
     });
@@ -150,8 +154,13 @@ const Home = () => {
       const sums = response.data[0];
       const monthAndSum = [];
       for (let i = 0; i < response.data[0].length; i++) {
-        monthAndSum.push({ month: months[i].Month, sum: sums[i] });
+        if (months[i]) {
+          monthAndSum.push({ month: months[i].Month, sum: sums[i] });
+        } else {
+          monthAndSum.push({ month: null, sum: sums[i] });
+        }
       }
+
       setMonthAndForecast(monthAndSum);
     });
   }, []);
@@ -165,10 +174,17 @@ const Home = () => {
       const inventory = response.data[0];
       const monthAndInventory = [];
       for (let i = 0; i < response.data[0].length; i++) {
-        monthAndInventory.push({
-          month: months[i].Month,
-          inventory: inventory[i],
-        });
+        if (months[i]) {
+          monthAndInventory.push({
+            month: months[i].Month,
+            inventory: inventory[i],
+          });
+        } else {
+          monthAndInventory.push({
+            month: null,
+            inventory: inventory[i],
+          });
+        }
       }
       setMonthAndInventory(monthAndInventory);
       console.log(monthAndInventory);
@@ -201,7 +217,6 @@ const Home = () => {
       if (nextSixMonths.includes('12')) {
         indexOfNext -= 12;
         updatedYear = parseInt(selectedStartYear) + 1;
-        console.log(updatedYear);
       }
       nextSixMonths.push(months[indexOfNext]);
     }
@@ -225,36 +240,9 @@ const Home = () => {
           <Card className={classes.card}>
             <div className={classes.weightedCard}>
               <div className={classes.weightedHeader}>
-                <Typography type="h4">Weighted Sales</Typography>
-                <div>
-                  <FormControl>
-                    <TextField
-                      size="small"
-                      type="month"
-                      variant="outlined"
-                      value={`${selectedStartYear}-${selectedStartMonth}`}
-                      onChange={(e) => {
-                        setSelectedStartYear(e.target.value.substring(0, 4));
-                        setSelectedStartMonth(e.target.value.substring(5, 7));
-                      }}
-                    />
-                  </FormControl>
-                </div>
-                <Typography type="h4">To</Typography>
-                <div>
-                  <FormControl>
-                    <TextField
-                      size="small"
-                      type="month"
-                      variant="outlined"
-                      value={`${selectedEndYear}-${selectedEndMonth}`}
-                      onChange={(e) => {
-                        setSelectedEndYear(e.target.value.substring(0, 4));
-                        setSelectedEndMonth(e.target.value.substring(5, 7));
-                      }}
-                    />
-                  </FormControl>
-                </div>
+                <Typography type="h4">
+                  Weighted Sales for Past Six Months
+                </Typography>
               </div>
               <Divider />
               <div className={classes.weightedContent}>
@@ -311,7 +299,7 @@ const Home = () => {
                             <div className={classes.item}>
                               <Typography>{items.product_name}:</Typography>
                               &emsp;
-                              <Typography>{items.quantity}</Typography>
+                              <Typography>{items.sum}</Typography>
                             </div>
                           );
                         })}
