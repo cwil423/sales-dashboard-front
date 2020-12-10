@@ -63,8 +63,12 @@ function Login() {
   const classes = useStyles();
   const [signup, setSignup] = useState(false);
 
-  const loginHandler = () => {
-    axios.get();
+  const loginHandler = (values) => {
+    axios({
+      method: 'post',
+      url: 'http://localhost:4000/users/login',
+      data: values,
+    });
   };
 
   const signupHandler = (values) => {
@@ -175,10 +179,10 @@ function Login() {
           {!signup ? (
             <div className={classes.formArea}>
               <Formik
-                initialValues={{ email: '', password: '', password2: '' }}
+                initialValues={{ email: '', password: '' }}
                 validationSchema={LoginSchema}
                 onSubmit={(values) => {
-                  console.log(values);
+                  loginHandler(values);
                 }}
               >
                 {({ errors, touched }) => (
