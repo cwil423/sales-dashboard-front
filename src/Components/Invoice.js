@@ -19,7 +19,6 @@ import Header from './Header';
 import PageHeader from './PageHeader';
 import SideMenu from './SideMenu';
 import ProductFields from './ProductFields';
-import Modal from './Modal';
 import Total from './Total';
 
 const useStyles = makeStyles((theme) => ({
@@ -136,10 +135,6 @@ const Invoice = () => {
     });
   };
 
-  const closeErrorHandler = () => {
-    setError(false);
-  };
-
   const yupSchema = object().shape({
     customer: object().required().typeError('customer is a required field'),
     salesperson: object()
@@ -177,7 +172,6 @@ const Invoice = () => {
         subtitle="Create and manage invoices"
       />
       <SideMenu />
-      <Modal error={error} close={closeErrorHandler} />
       <div className={classes.invoice}>
         <Card className={classes.createInvoiceCard}>
           <Formik

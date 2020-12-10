@@ -62,13 +62,17 @@ const useStyles = makeStyles((theme) => ({
 function Login() {
   const classes = useStyles();
   const [signup, setSignup] = useState(false);
+  const [modalOpen, setModalOpen] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const loginHandler = (values) => {
     axios({
       method: 'post',
       url: 'http://localhost:4000/users/login',
       data: values,
-    });
+    })
+      .then((response) => setErrorMessage(response.data))
+      .catch((error) => console.log(error));
   };
 
   const signupHandler = (values) => {
@@ -76,7 +80,14 @@ function Login() {
       method: 'post',
       url: 'http://localhost:4000/users/signup',
       data: values,
-    });
+    })
+      .then((response) => setErrorMessage(response.data))
+      .catch((error) => console.log(error));
+  };
+
+  const loginAndSignupChangeHandler = () => {
+    setErrorMessage();
+    setSignup(!signup);
   };
 
   const SignupSchema = Yup.object().shape({
@@ -103,8 +114,8 @@ function Login() {
     <div>
       <PageHeader
         icon={<AccountCircleIcon fontSize="large" />}
-        title="Login"
-        subtitle="Log in to access site features."
+        title="Sign In"
+        subtitle="Sign in to access site features."
       />
       <div className={classes.login}>
         <Card className={classes.card}>
@@ -163,9 +174,10 @@ function Login() {
                         name="administratorPassword"
                       />
                       <ErrorMessage name="administratorPassword" />
-                      {/* <Field as={TextField} name="passwordConfirmation" /> */}
+                      <Typography>{errorMessage}</Typography>
+
                       <Button type="submit">Submit</Button>
-                      <Typography onClick={() => setSignup(!signup)}>
+                      <Typography onClick={() => loginAndSignupChangeHandler()}>
                         Have an account? Click here to sign in.
                       </Typography>
                       {/* <pre>{JSON.stringify(values, null, 4)}</pre>
@@ -203,8 +215,9 @@ function Login() {
                         name="password"
                       />
                       <ErrorMessage name="password" />
+                      <Typography>{errorMessage}</Typography>
                       <Button type="submit">Submit</Button>
-                      <Typography onClick={() => setSignup(!signup)}>
+                      <Typography onClick={() => loginAndSignupChangeHandler()}>
                         Need an account? Click here to sign up.
                       </Typography>
                     </div>
