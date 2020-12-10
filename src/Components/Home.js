@@ -241,7 +241,7 @@ const Home = () => {
             <div className={classes.weightedCard}>
               <div className={classes.weightedHeader}>
                 <Typography type="h4">
-                  Weighted Sales for Past Six Months
+                  Commission for Past Six Months
                 </Typography>
               </div>
               <Divider />
