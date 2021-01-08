@@ -124,6 +124,7 @@ const Home = () => {
     axios({
       method: 'GET',
       url: 'http://localhost:4000/sales/weighted',
+      withCredentials: true,
       data: {
         startMonth: selectedStartMonth,
         startYear: selectedStartYear,
@@ -149,6 +150,7 @@ const Home = () => {
     axios({
       method: 'GET',
       url: 'http://localhost:4000/sales/forecast',
+      withCredentials: true,
     }).then((response) => {
       const months = response.data[1];
       const sums = response.data[0];
@@ -169,6 +171,7 @@ const Home = () => {
     axios({
       method: 'GET',
       url: 'http://localhost:4000/inventory/forecast',
+      withCredentials: true,
     }).then((response) => {
       const months = response.data[1];
       const inventory = response.data[0];

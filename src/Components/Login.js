@@ -69,9 +69,10 @@ function Login() {
     axios({
       method: 'post',
       url: 'http://localhost:4000/users/login',
+      withCredentials: true,
       data: values,
     })
-      .then((response) => setErrorMessage(response.data))
+      .then((response) => console.log(response))
       .catch((error) => console.log(error));
   };
 
@@ -233,6 +234,15 @@ function Login() {
         >
           quickbooks Button
         </a> */}
+          <button
+            onClick={() =>
+              axios
+                .get('http://localhost:4000/users/cookie')
+                .then((response) => console.log(response))
+            }
+          >
+            Click
+          </button>
         </Card>
       </div>
     </div>
