@@ -12,6 +12,7 @@ import {
   Divider,
 } from '@material-ui/core';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import { format } from 'date-fns';
 import PageHeader from './PageHeader';
 import Header from './Header';
@@ -119,6 +120,10 @@ const Home = () => {
   const [selectedEndYear, setSelectedEndYear] = useState(currentYear);
   const [monthAndForecast, setMonthAndForecast] = useState([]);
   const [monthAndInventory, setMonthAndInventory] = useState([]);
+
+  useEffect(() => {
+    console.log(Cookies.get());
+  }, []);
 
   useEffect(() => {
     axios({

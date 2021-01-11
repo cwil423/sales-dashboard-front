@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { useHistory } from 'react-router-dom';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Image from '../assets/images/quickbooks.png';
 import hoverImage from '../assets/images/quickbooksHover.png';
@@ -61,6 +62,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Login() {
   const classes = useStyles();
+  const history = useHistory();
   const [signup, setSignup] = useState(false);
   const [modalOpen, setModalOpen] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
@@ -72,7 +74,9 @@ function Login() {
       withCredentials: true,
       data: values,
     })
-      .then((response) => console.log(response))
+      .then((response) => {
+        history.push('/');
+      })
       .catch((error) => console.log(error));
   };
 
