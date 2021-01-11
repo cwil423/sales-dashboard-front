@@ -1,5 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Cookies from 'js-cookie';
+import { useHistory } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -37,8 +39,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Header() {
   const classes = useStyles();
-
+  const history = useHistory();
   const dispatch = useDispatch();
+
+  const logoutHandler = () => {
+    Cookies.remove('token');
+    Cookies.remove('refresh-token');
+    history.push('/login');
+  };
 
   // let quickbooksButton = null;
   // if (props.quickbooksButton) {
@@ -78,7 +86,9 @@ export default function Header() {
           <IconButton onClick={themeHandler}>
             <SettingsBrightnessIcon />
           </IconButton>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" onClick={logoutHandler}>
+            Log Out
+          </Button>
         </Toolbar>
       </AppBar>
     </div>

@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { useHistory } from 'react-router-dom';
 import { format } from 'date-fns';
 import PageHeader from './PageHeader';
 import Header from './Header';
@@ -111,6 +112,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Home = () => {
   const classes = useStyles();
+  const history = useHistory();
   const [monthAndWeightedSales, setMonthAndWeightedSales] = useState([]);
   const currentMonth = format(new Date(), 'MM');
   const currentYear = format(new Date(), 'yyyy');
@@ -122,10 +124,14 @@ const Home = () => {
   const [monthAndInventory, setMonthAndInventory] = useState([]);
 
   useEffect(() => {
-    console.log(Cookies.get());
+    if (Cookies.get('token')) {
+      return;
+    }
+    history.push('/login');
   }, []);
 
   useEffect(() => {
+    let mounted = true;
     axios({
       method: 'GET',
       url: 'http://localhost:4000/sales/weighted',
@@ -137,66 +143,82 @@ const Home = () => {
         endYear: selectedEndYear,
       },
     }).then((response) => {
-      const months = response.data[1];
-      const sums = response.data[0];
-      const monthAndSum = [];
-      for (let i = 0; i < response.data[0].length; i++) {
-        if (months[i]) {
-          monthAndSum.unshift({ month: months[i].Month, sum: sums[i] });
-        } else {
-          monthAndSum.unshift({ month: null, sum: sums[i] });
+      if (mounted) {
+        const months = response.data[1];
+        const sums = response.data[0];
+        const monthAndSum = [];
+        for (let i = 0; i < response.data[0].length; i++) {
+          if (months[i]) {
+            monthAndSum.unshift({ month: months[i].Month, sum: sums[i] });
+          } else {
+            monthAndSum.unshift({ month: null, sum: sums[i] });
+          }
         }
+        setMonthAndWeightedSales(monthAndSum);
       }
-      setMonthAndWeightedSales(monthAndSum);
     });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   useEffect(() => {
+    let mounted = true;
     axios({
       method: 'GET',
       url: 'http://localhost:4000/sales/forecast',
       withCredentials: true,
     }).then((response) => {
-      const months = response.data[1];
-      const sums = response.data[0];
-      const monthAndSum = [];
-      for (let i = 0; i < response.data[0].length; i++) {
-        if (months[i]) {
-          monthAndSum.push({ month: months[i].Month, sum: sums[i] });
-        } else {
-          monthAndSum.push({ month: null, sum: sums[i] });
+      if (mounted) {
+        const months = response.data[1];
+        const sums = response.data[0];
+        const monthAndSum = [];
+        for (let i = 0; i < response.data[0].length; i++) {
+          if (months[i]) {
+            monthAndSum.push({ month: months[i].Month, sum: sums[i] });
+          } else {
+            monthAndSum.push({ month: null, sum: sums[i] });
+          }
         }
+        setMonthAndForecast(monthAndSum);
       }
-
-      setMonthAndForecast(monthAndSum);
     });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   useEffect(() => {
+    let mounted = true;
     axios({
       method: 'GET',
       url: 'http://localhost:4000/inventory/forecast',
       withCredentials: true,
     }).then((response) => {
-      const months = response.data[1];
-      const inventory = response.data[0];
-      const monthAndInventory = [];
-      for (let i = 0; i < response.data[0].length; i++) {
-        if (months[i]) {
-          monthAndInventory.push({
-            month: months[i].Month,
-            inventory: inventory[i],
-          });
-        } else {
-          monthAndInventory.push({
-            month: null,
-            inventory: inventory[i],
-          });
+      if (mounted) {
+        const months = response.data[1];
+        const inventory = response.data[0];
+        const monthAndInventory = [];
+        for (let i = 0; i < response.data[0].length; i++) {
+          if (months[i]) {
+            monthAndInventory.push({
+              month: months[i].Month,
+              inventory: inventory[i],
+            });
+          } else {
+            monthAndInventory.push({
+              month: null,
+              inventory: inventory[i],
+            });
+          }
         }
+        setMonthAndInventory(monthAndInventory);
+        console.log(monthAndInventory);
       }
-      setMonthAndInventory(monthAndInventory);
-      console.log(monthAndInventory);
     });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   useEffect(() => {

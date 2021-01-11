@@ -12,6 +12,7 @@ import {
   List,
   Divider,
 } from '@material-ui/core';
+
 import axios from 'axios';
 import { format } from 'date-fns';
 import InventoryForecastTable from './InventoryForecastTable';
@@ -59,11 +60,19 @@ export default function InventoryForecast() {
   const [inventory, setInventory] = useState([]);
 
   useEffect(() => {
+    let mounted = true;
     axios({
       method: 'POST',
       url: 'http://localhost:4000/inventory',
       data: { month: selectedMonth, year: selectedYear },
-    }).then((response) => setInventory(response.data));
+    }).then((response) => {
+      if (mounted) {
+        setInventory(response.data);
+      }
+      return () => {
+        mounted = false;
+      };
+    });
   }, [selectedMonth]);
 
   return (

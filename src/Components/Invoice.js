@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-
 import { object, array, boolean, number, date } from 'yup';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
   Checkbox,
@@ -14,6 +12,8 @@ import {
   ButtonGroup,
   Typography,
 } from '@material-ui/core';
+import Cookies from 'js-cookie';
+import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import Header from './Header';
 import PageHeader from './PageHeader';
@@ -86,6 +86,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Invoice = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [customersList, setCustomersList] = useState([]);
   const [salespeopleList, setSalespeopleList] = useState([]);
@@ -99,6 +100,14 @@ const Invoice = () => {
     { label: 'Semi-Annually', monthsUntilNextDelivery: 6 },
     { label: 'Annually', monthsUntilNextDelivery: 12 },
   ]);
+
+  useEffect(() => {
+    if (Cookies.get('token')) {
+      console.log('yes');
+    } else {
+      history.push('/login');
+    }
+  }, []);
 
   const fetchDataHandler = (letters, type) => {
     axios({

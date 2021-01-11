@@ -233,20 +233,11 @@ function Login() {
           ) : null}
 
           {/* <a
-          className={classes.quickbooksButton}
-          href="http://localhost:4000/oauth"
-        >
-          quickbooks Button
-        </a> */}
-          <button
-            onClick={() =>
-              axios
-                .get('http://localhost:4000/users/cookie')
-                .then((response) => console.log(response))
-            }
+            className={classes.quickbooksButton}
+            href="http://localhost:4000/oauth"
           >
-            Click
-          </button>
+            quickbooks Button
+          </a> */}
         </Card>
       </div>
     </div>

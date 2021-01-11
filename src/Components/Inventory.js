@@ -9,6 +9,8 @@ import {
 import { Field, Form, Formik } from 'formik';
 import { object, array, boolean, number, date } from 'yup';
 import { format } from 'date-fns';
+import { useHistory } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import StoreIcon from '@material-ui/icons/Store';
 import SideMenu from './SideMenu';
 import PageHeader from './PageHeader';
@@ -67,6 +69,14 @@ const yupSchema = object().shape({
 
 export default function Inventory() {
   const classes = useStyles();
+  const history = useHistory();
+
+  useEffect(() => {
+    if (Cookies.get('token')) {
+      return;
+    }
+    history.push('/login');
+  }, []);
 
   const submitHandler = (items) => {
     axios({
