@@ -15,19 +15,36 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     // justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  user: {
+    marginRight: '35px',
+  },
+  iconAndTitles: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
-const PageHeader = ({ icon, title, subtitle }) => {
+const PageHeader = ({ icon, title, subtitle, user }) => {
   const classes = useStyles();
+  console.log(user);
 
   return (
     <Paper elevation={0} className={classes.root}>
       <div className={classes.pageHeader}>
-        <Card className={classes.pageIcon}>{icon}</Card>
-        <div>
-          <Typography variant="h4">{title}</Typography>
-          <Typography>{subtitle}</Typography>
+        <div className={classes.iconAndTitles}>
+          <Card className={classes.pageIcon}>{icon}</Card>
+          <div>
+            <Typography variant="h4">{title}</Typography>
+            <Typography>{subtitle}</Typography>
+          </div>
+        </div>
+        <div className={classes.user}>
+          Current User:
+          <Typography>
+            {user ? user.firstName : null} {user ? user.lastName : null}
+          </Typography>
         </div>
       </div>
     </Paper>

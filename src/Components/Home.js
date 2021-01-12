@@ -122,11 +122,23 @@ const Home = () => {
   const [selectedEndYear, setSelectedEndYear] = useState(currentYear);
   const [monthAndForecast, setMonthAndForecast] = useState([]);
   const [monthAndInventory, setMonthAndInventory] = useState([]);
+  const [user, setUser] = useState();
 
   useEffect(() => {
     if (Cookies.get('token')) {
-      console.log('triggered');
+      axios({
+        method: 'GET',
+        url: 'http://localhost:4000/users/user',
+        withCredentials: true,
+      }).then((response) => {
+        setUser(response.data);
+      });
+    }
+  }, []);
 
+  useEffect(() => {
+    // Check for cookie to avoid weird bug where axios call takes too long
+    if (Cookies.get('token')) {
       axios({
         method: 'GET',
         url: 'http://localhost:4000/sales/weighted',
@@ -138,8 +150,6 @@ const Home = () => {
           endYear: selectedEndYear,
         },
       }).then((response) => {
-        console.log('response received');
-
         const months = response.data[1];
         const sums = response.data[0];
         const monthAndSum = [];
@@ -156,6 +166,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    // Check for cookie to avoid weird bug where axios call takes too long
     if (Cookies.get('token')) {
       axios({
         method: 'GET',
@@ -178,6 +189,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    // Check for cookie to avoid weird bug where axios call takes too long
     if (Cookies.get('token')) {
       axios({
         method: 'GET',
@@ -249,6 +261,7 @@ const Home = () => {
         icon={<AssessmentIcon fontSize="large" />}
         title="Home Dashboard"
         subtitle="General graphs and trends."
+        user={user}
       />
       <div className={classes.cards}>
         <div className={classes.cardGroupOne}>

@@ -27,7 +27,7 @@ function App() {
         <CssBaseline />
         <Switch>
           <div className="app">
-            {Cookies.token ? null : <Redirect to="/login" />}
+            {Cookies.get('token') ? null : <Redirect to="/login" />}
             <Route exact path="/" component={Home} />
             <Route path="/login" component={Login} />
             {/* <Route path="/home" component={Home} /> */}
