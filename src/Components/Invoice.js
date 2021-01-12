@@ -101,14 +101,6 @@ const Invoice = () => {
     { label: 'Annually', monthsUntilNextDelivery: 12 },
   ]);
 
-  useEffect(() => {
-    if (Cookies.get('token')) {
-      console.log('yes');
-    } else {
-      history.push('/login');
-    }
-  }, []);
-
   const fetchDataHandler = (letters, type) => {
     axios({
       method: 'post',

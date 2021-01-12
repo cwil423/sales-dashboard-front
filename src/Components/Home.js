@@ -125,25 +125,21 @@ const Home = () => {
 
   useEffect(() => {
     if (Cookies.get('token')) {
-      return;
-    }
-    history.push('/login');
-  }, []);
+      console.log('triggered');
 
-  useEffect(() => {
-    let mounted = true;
-    axios({
-      method: 'GET',
-      url: 'http://localhost:4000/sales/weighted',
-      withCredentials: true,
-      data: {
-        startMonth: selectedStartMonth,
-        startYear: selectedStartYear,
-        endMonth: selectedEndMonth,
-        endYear: selectedEndYear,
-      },
-    }).then((response) => {
-      if (mounted) {
+      axios({
+        method: 'GET',
+        url: 'http://localhost:4000/sales/weighted',
+        withCredentials: true,
+        data: {
+          startMonth: selectedStartMonth,
+          startYear: selectedStartYear,
+          endMonth: selectedEndMonth,
+          endYear: selectedEndYear,
+        },
+      }).then((response) => {
+        console.log('response received');
+
         const months = response.data[1];
         const sums = response.data[0];
         const monthAndSum = [];
@@ -155,21 +151,17 @@ const Home = () => {
           }
         }
         setMonthAndWeightedSales(monthAndSum);
-      }
-    });
-    return () => {
-      mounted = false;
-    };
+      });
+    }
   }, []);
 
   useEffect(() => {
-    let mounted = true;
-    axios({
-      method: 'GET',
-      url: 'http://localhost:4000/sales/forecast',
-      withCredentials: true,
-    }).then((response) => {
-      if (mounted) {
+    if (Cookies.get('token')) {
+      axios({
+        method: 'GET',
+        url: 'http://localhost:4000/sales/forecast',
+        withCredentials: true,
+      }).then((response) => {
         const months = response.data[1];
         const sums = response.data[0];
         const monthAndSum = [];
@@ -181,21 +173,17 @@ const Home = () => {
           }
         }
         setMonthAndForecast(monthAndSum);
-      }
-    });
-    return () => {
-      mounted = false;
-    };
+      });
+    }
   }, []);
 
   useEffect(() => {
-    let mounted = true;
-    axios({
-      method: 'GET',
-      url: 'http://localhost:4000/inventory/forecast',
-      withCredentials: true,
-    }).then((response) => {
-      if (mounted) {
+    if (Cookies.get('token')) {
+      axios({
+        method: 'GET',
+        url: 'http://localhost:4000/inventory/forecast',
+        withCredentials: true,
+      }).then((response) => {
         const months = response.data[1];
         const inventory = response.data[0];
         const monthAndInventory = [];
@@ -214,11 +202,8 @@ const Home = () => {
         }
         setMonthAndInventory(monthAndInventory);
         console.log(monthAndInventory);
-      }
-    });
-    return () => {
-      mounted = false;
-    };
+      });
+    }
   }, []);
 
   useEffect(() => {

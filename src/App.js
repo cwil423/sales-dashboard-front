@@ -1,5 +1,7 @@
 import React from 'react';
 import { createMuiTheme, ThemeProvider, CssBaseline } from '@material-ui/core';
+import Cookies from 'js-cookie';
+import { Redirect } from 'react-router-dom';
 import './App.css';
 import { Switch, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -25,6 +27,7 @@ function App() {
         <CssBaseline />
         <Switch>
           <div className="app">
+            {Cookies.token ? null : <Redirect to="/login" />}
             <Route exact path="/" component={Home} />
             <Route path="/login" component={Login} />
             {/* <Route path="/home" component={Home} /> */}

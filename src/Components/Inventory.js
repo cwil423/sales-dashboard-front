@@ -71,13 +71,6 @@ export default function Inventory() {
   const classes = useStyles();
   const history = useHistory();
 
-  useEffect(() => {
-    if (Cookies.get('token')) {
-      return;
-    }
-    history.push('/login');
-  }, []);
-
   const submitHandler = (items) => {
     axios({
       method: 'POST',
