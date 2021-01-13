@@ -12,6 +12,7 @@ import {
   Divider,
 } from '@material-ui/core';
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { useHistory } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -122,7 +123,10 @@ const Home = () => {
   const [selectedEndYear, setSelectedEndYear] = useState(currentYear);
   const [monthAndForecast, setMonthAndForecast] = useState([]);
   const [monthAndInventory, setMonthAndInventory] = useState([]);
-  const [user, setUser] = useState();
+
+  const user = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (Cookies.get('token')) {
@@ -131,7 +135,7 @@ const Home = () => {
         url: 'http://localhost:4000/users/user',
         withCredentials: true,
       }).then((response) => {
-        setUser(response.data);
+        dispatch({ type: 'SET_USER', user: response.data });
       });
     }
   }, []);
@@ -213,7 +217,6 @@ const Home = () => {
           }
         }
         setMonthAndInventory(monthAndInventory);
-        console.log(monthAndInventory);
       });
     }
   }, []);

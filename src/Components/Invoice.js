@@ -172,7 +172,7 @@ const Invoice = () => {
           .required('quantity is a required field')
           .min(1, 'quantity must at least be 1')
           .typeError('price must be a number'),
-        serviceDate: date(),
+        saleDate: date(),
       })
     ),
   });
@@ -201,7 +201,7 @@ const Invoice = () => {
                   product: '',
                   price: '',
                   quantity: '',
-                  serviceDate: '',
+                  saleDate: '',
                 },
               ],
             }}
@@ -345,8 +345,8 @@ const Invoice = () => {
                           itemArray[indexOfItem].quantity = value;
                           setFieldValue('products', itemArray);
                           break;
-                        case 'serviceDate':
-                          itemArray[indexOfItem].serviceDate = value;
+                        case 'saleDate':
+                          itemArray[indexOfItem].saleDate = value;
                           setFieldValue('products', itemArray);
                           break;
                         default:
@@ -374,7 +374,7 @@ const Invoice = () => {
                           product: '',
                           price: '',
                           quantity: '',
-                          serviceDate: '',
+                          saleDate: '',
                         });
                         setFieldValue('products', itemArray);
                       }}

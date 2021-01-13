@@ -1,5 +1,6 @@
 const initialState = {
   theme: true,
+  user: null,
 };
 
 const reducer = (state = initialState, action) => {
@@ -9,6 +10,11 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         theme: !theme,
+      };
+    case 'SET_USER':
+      return {
+        ...state,
+        user: action.user,
       };
     default:
       break;
