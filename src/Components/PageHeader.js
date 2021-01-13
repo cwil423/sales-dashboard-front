@@ -28,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
 
 const PageHeader = ({ icon, title, subtitle, user }) => {
   const classes = useStyles();
-  console.log(user);
 
   return (
     <Paper elevation={0} className={classes.root}>
@@ -52,4 +51,9 @@ const PageHeader = ({ icon, title, subtitle, user }) => {
   );
 };
 
-export default PageHeader;
+export default React.memo(PageHeader, (prevProps, nextProps) => {
+  if (prevProps.user !== nextProps.user) {
+    return false;
+  }
+  return true;
+});
