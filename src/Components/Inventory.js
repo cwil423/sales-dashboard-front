@@ -70,6 +70,19 @@ const yupSchema = object().shape({
 export default function Inventory() {
   const classes = useStyles();
   const history = useHistory();
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    if (Cookies.get('token')) {
+      axios({
+        method: 'GET',
+        url: 'http://localhost:4000/users/user',
+        withCredentials: true,
+      }).then((response) => {
+        setUser(response.data);
+      });
+    }
+  }, []);
 
   const submitHandler = (items) => {
     axios({
@@ -88,6 +101,7 @@ export default function Inventory() {
         icon={<StoreIcon fontSize="large" />}
         title="Inventory"
         subtitle="View forecasted inventory demands."
+        user={user}
       />
       <div className={classes.cardArea}>
         <Card className={classes.cards}>

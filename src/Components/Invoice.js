@@ -100,6 +100,19 @@ const Invoice = () => {
     { label: 'Semi-Annually', monthsUntilNextDelivery: 6 },
     { label: 'Annually', monthsUntilNextDelivery: 12 },
   ]);
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    if (Cookies.get('token')) {
+      axios({
+        method: 'GET',
+        url: 'http://localhost:4000/users/user',
+        withCredentials: true,
+      }).then((response) => {
+        setUser(response.data);
+      });
+    }
+  }, []);
 
   const fetchDataHandler = (letters, type) => {
     axios({
@@ -111,7 +124,7 @@ const Invoice = () => {
         case 'customers':
           setCustomersList(response.data);
           break;
-        case 'salespeople':
+        case 'users':
           setSalespeopleList(response.data);
           break;
         default:
@@ -171,6 +184,7 @@ const Invoice = () => {
         icon={<TrendingUpIcon fontSize="large" />}
         title="Invoices"
         subtitle="Create and manage invoices"
+        user={user}
       />
       <SideMenu />
       <div className={classes.invoice}>
@@ -250,7 +264,7 @@ const Invoice = () => {
                       onInputChange={(event, newInputValue) => {
                         if (newInputValue !== '') {
                           const letters = newInputValue;
-                          fetchDataHandler(letters, 'salespeople');
+                          fetchDataHandler(letters, 'users');
                         }
                       }}
                       onChange={(_, value) =>

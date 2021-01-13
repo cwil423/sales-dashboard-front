@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
   },
   user: {
-    marginRight: '35px',
+    marginRight: '25px',
   },
   iconAndTitles: {
     display: 'flex',
@@ -41,7 +41,8 @@ const PageHeader = ({ icon, title, subtitle, user }) => {
           </div>
         </div>
         <div className={classes.user}>
-          Current User:
+          {user ? 'Current User:' : null}
+
           <Typography>
             {user ? user.firstName : null} {user ? user.lastName : null}
           </Typography>
