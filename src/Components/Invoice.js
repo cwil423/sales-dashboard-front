@@ -92,7 +92,11 @@ const Invoice = () => {
   const history = useHistory();
 
   const [customersList, setCustomersList] = useState([]);
-  const [salespeopleList, setSalespeopleList] = useState([]);
+  // const [salespeopleList, setSalespeopleList] = useState([]);
+  const [saleType, setSaleType] = useState([
+    { label: 'Residential' },
+    { label: 'Business' },
+  ]);
   const [error, setError] = useState(false);
   const [frequencies, setFrequencies] = useState([
     { label: 'Weekly', weeksUntilNextDelivery: 1 },
@@ -128,7 +132,7 @@ const Invoice = () => {
           setCustomersList(response.data);
           break;
         case 'users':
-          setSalespeopleList(response.data);
+          // setSalespeopleList(response.data);
           break;
         default:
           break;
@@ -142,6 +146,7 @@ const Invoice = () => {
       url: 'http://localhost:4000/sales/invoice',
       data: {
         invoice,
+        user,
       },
     }).then((response) => {
       if (response.data.message) {
@@ -154,9 +159,7 @@ const Invoice = () => {
 
   const yupSchema = object().shape({
     customer: object().required().typeError('customer is a required field'),
-    salesperson: object()
-      .required()
-      .typeError('salesperson is a required field'),
+    saleType: object().required().typeError('sale type is a required field'),
     frequency: object()
       .typeError('sale frequency must is input incorrectly')
       .required('sale frequency is a required field'),
@@ -195,7 +198,7 @@ const Invoice = () => {
           <Formik
             initialValues={{
               customer: '',
-              salesperson: '',
+              saleType: '',
               frequency: '',
               bulk: false,
               products: [
@@ -249,30 +252,26 @@ const Invoice = () => {
                       name="customer"
                     />
                     <Field
-                      name="salesperson"
+                      name="saleType"
                       size="small"
                       component={Autocomplete}
-                      options={salespeopleList}
-                      getOptionLabel={(option) =>
-                        `${option.first_name} ${option.last_name}`
-                      }
+                      options={saleType}
+                      getOptionLabel={(option) => option.label}
                       style={{ width: 300, padding: 15 }}
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          label="Salesperson"
+                          label="Sale Type"
                           variant="outlined"
                         />
                       )}
-                      onInputChange={(event, newInputValue) => {
-                        if (newInputValue !== '') {
-                          const letters = newInputValue;
-                          fetchDataHandler(letters, 'users');
-                        }
-                      }}
-                      onChange={(_, value) =>
-                        setFieldValue('salesperson', value)
-                      }
+                      // onInputChange={(event, newInputValue) => {
+                      //   if (newInputValue !== '') {
+                      //     const letters = newInputValue;
+                      //     fetchDataHandler(letters, 'users');
+                      //   }
+                      // }}
+                      onChange={(_, value) => setFieldValue('saleType', value)}
                     />
                     <ErrorMessage
                       render={(message) => (
@@ -284,7 +283,7 @@ const Invoice = () => {
                   </div>
                   <div className={classes.frequencyAndBulk}>
                     <Field
-                      name="salesperson"
+                      name="frequency"
                       size="small"
                       component={Autocomplete}
                       options={frequencies}
@@ -297,12 +296,6 @@ const Invoice = () => {
                           variant="outlined"
                         />
                       )}
-                      onInputChange={(event, newInputValue) => {
-                        if (newInputValue !== '') {
-                          const letters = newInputValue;
-                          fetchDataHandler(letters, 'salespeople');
-                        }
-                      }}
                       onChange={(_, value) => setFieldValue('frequency', value)}
                     />
                     <ErrorMessage
