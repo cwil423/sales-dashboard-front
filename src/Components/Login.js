@@ -74,10 +74,10 @@ function Login() {
       withCredentials: true,
       data: values,
     })
-      .then((response) => {
+      .then(() => {
         history.push('/');
       })
-      .catch((error) => console.log(error));
+      .catch((error) => setErrorMessage(error.response.data));
   };
 
   const signupHandler = (values) => {
@@ -86,8 +86,10 @@ function Login() {
       url: 'http://localhost:4000/users/signup',
       data: values,
     })
-      .then((response) => setErrorMessage(response.data))
-      .catch((error) => console.log(error));
+      .then(() => {
+        history.push('/');
+      })
+      .catch((error) => setErrorMessage(error.response.data));
   };
 
   const loginAndSignupChangeHandler = () => {
@@ -101,6 +103,7 @@ function Login() {
       .min(2, 'Not Enough Characters'),
     lastName: Yup.string().required('Required').min(2, 'Not Enough Characters'),
     isSalesperson: Yup.boolean().typeError('Required').required('Required'),
+    salaried: Yup.boolean().typeError('Required').required('Required'),
     email: Yup.string().email('Invalid email').required('Required'),
     password: Yup.string().required('Required').min(8, 'Password is Too Short'),
     administratorPassword: Yup.string().required('Required'),
@@ -131,6 +134,7 @@ function Login() {
                   firstName: '',
                   lastName: '',
                   isSalesperson: null,
+                  salaried: null,
                   email: '',
                   password: '',
                   administratorPassword: '',
@@ -158,6 +162,16 @@ function Login() {
                         select
                         label="Are you a Salesperson"
                         name="isSalesperson"
+                      >
+                        <MenuItem value={true}>Yes</MenuItem>
+                        <MenuItem value={false}>No</MenuItem>
+                      </Field>
+                      <ErrorMessage name="isSalesperson" />
+                      <Field
+                        as={TextField}
+                        select
+                        label="Do you have a salary?"
+                        name="salaried"
                       >
                         <MenuItem value={true}>Yes</MenuItem>
                         <MenuItem value={false}>No</MenuItem>

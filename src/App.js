@@ -10,6 +10,7 @@ import DisplayPage from './Components/DisplayPage';
 import Invoice from './Components/Invoice';
 import Home from './Components/Home';
 import Inventory from './Components/Inventory';
+import Reports from './Components/Reports';
 
 function App() {
   const themeColor = useSelector((state) => state.theme);
@@ -27,12 +28,14 @@ function App() {
         <CssBaseline />
         <Switch>
           <div className="app">
+            <Route render={() => <Redirect to={{ pathname: '/' }} />} />
             {Cookies.get('token') ? null : <Redirect to="/login" />}
             <Route exact path="/" component={Home} />
             <Route path="/login" component={Login} />
             {/* <Route path="/home" component={Home} /> */}
-            <Route path="/invoice" component={Invoice} />
-            <Route path="/inventory" component={Inventory} />
+            <Route path="/sales" component={Invoice} />
+            {/* <Route path="/inventory" component={Inventory} /> */}
+            <Route path="/reports" component={Reports} />
             {/* <DisplayPage /> */}
           </div>
         </Switch>

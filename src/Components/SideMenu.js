@@ -8,6 +8,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import HomeIcon from '@material-ui/icons/Home';
 import DescriptionIcon from '@material-ui/icons/Description';
+import MenuBookIcon from '@material-ui/icons/MenuBook';
 import StoreIcon from '@material-ui/icons/Store';
 import { Link } from 'react-router-dom';
 import Image from '../assets/images/inbound.png';
@@ -53,20 +54,28 @@ const SideMenu = () => {
             <ListItemText primary="Home" />
           </ListItem>
         </Link>
-        <Link to="/invoice" className={classes.links}>
+        <Link to="/sales" className={classes.links}>
           <ListItem button key={2}>
             <ListItemIcon>
               <DescriptionIcon />
             </ListItemIcon>
-            <ListItemText primary="Invoices" />
+            <ListItemText primary="Sales" />
           </ListItem>
         </Link>
-        <Link to="/inventory" className={classes.links}>
+        {/* <Link to="/inventory" className={classes.links}>
           <ListItem button key={3}>
             <ListItemIcon>
               <StoreIcon />
             </ListItemIcon>
             <ListItemText primary="Inventory" />
+          </ListItem>
+        </Link> */}
+        <Link to="/reports" className={classes.links}>
+          <ListItem button key={2}>
+            <ListItemIcon>
+              <MenuBookIcon />
+            </ListItemIcon>
+            <ListItemText primary="Reports" />
           </ListItem>
         </Link>
       </List>

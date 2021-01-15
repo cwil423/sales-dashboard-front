@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { object, array, boolean, number, date } from 'yup';
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import DescriptionIcon from '@material-ui/icons/Description';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
   Checkbox,
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   topSection: {
     display: 'flex',
     justifyContent: 'space-between',
-    // marginBottom: '25px',
+    marginBottom: '25px',
     // backgroundColor: 'teal',
   },
   customerAndSalesperson: {
@@ -81,6 +81,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     color: 'red',
+  },
+  productSection: {
+    marginTop: '35px',
   },
 }));
 
@@ -181,9 +184,9 @@ const Invoice = () => {
     <div className={classes.root}>
       <Header quickbooksButton />
       <PageHeader
-        icon={<TrendingUpIcon fontSize="large" />}
-        title="Invoices"
-        subtitle="Create and manage invoices"
+        icon={<DescriptionIcon fontSize="large" />}
+        title="Sales"
+        subtitle="Record new sales"
         user={user}
       />
       <SideMenu />
@@ -395,7 +398,7 @@ const Invoice = () => {
                     >
                       Remove Item
                     </Button>
-                    <Button type="submit">Create Invoice</Button>
+                    <Button type="submit">Record Sale</Button>
                   </ButtonGroup>
                 </div>
               </Form>

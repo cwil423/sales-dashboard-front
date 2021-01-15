@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     // height: '300px',
     margin: '30px',
-    // backgroundColor: 'green',
+    justifyContent: 'center',
   },
   monthsAndSums: {
     display: 'flex',
@@ -66,6 +66,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-around',
+    alignItems: 'center',
     width: '100%',
     margin: '35px',
   },
@@ -77,11 +78,8 @@ const useStyles = makeStyles((theme) => ({
   },
   weightedHeader: {
     display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingRight: '150px',
-    paddingLeft: '150px',
   },
   inventoryCard: {
     display: 'flex',
@@ -123,6 +121,8 @@ const Home = () => {
   const [selectedEndYear, setSelectedEndYear] = useState(currentYear);
   const [monthAndForecast, setMonthAndForecast] = useState([]);
   const [monthAndInventory, setMonthAndInventory] = useState([]);
+  const [commissionThisYear, setCommissionThisYear] = useState();
+  const [commissionThisMonth, setCommissionThisMonth] = useState();
 
   const user = useSelector((state) => state.user);
 
@@ -141,11 +141,29 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    if (Cookies.get('token')) {
+      axios({
+        method: 'GET',
+        url: 'http://localhost:4000/commission/year',
+      }).then((response) => setCommissionThisYear(response.data.sum));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (Cookies.get('token')) {
+      axios({
+        method: 'GET',
+        url: 'http://localhost:4000/commission/month',
+      }).then((response) => setCommissionThisMonth(response.data.sum));
+    }
+  }, []);
+
+  useEffect(() => {
     // Check for cookie to avoid weird bug where axios call takes too long
     if (Cookies.get('token')) {
       axios({
         method: 'GET',
-        url: 'http://localhost:4000/sales/weighted',
+        url: 'http://localhost:4000/commission/pastSixMonths',
         withCredentials: true,
         data: {
           startMonth: selectedStartMonth,
@@ -169,57 +187,57 @@ const Home = () => {
     }
   }, []);
 
-  useEffect(() => {
-    // Check for cookie to avoid weird bug where axios call takes too long
-    if (Cookies.get('token')) {
-      axios({
-        method: 'GET',
-        url: 'http://localhost:4000/sales/forecast',
-        withCredentials: true,
-      }).then((response) => {
-        const months = response.data[1];
-        const sums = response.data[0];
-        const monthAndSum = [];
-        for (let i = 0; i < response.data[0].length; i++) {
-          if (months[i]) {
-            monthAndSum.push({ month: months[i].Month, sum: sums[i] });
-          } else {
-            monthAndSum.push({ month: null, sum: sums[i] });
-          }
-        }
-        setMonthAndForecast(monthAndSum);
-      });
-    }
-  }, []);
+  // useEffect(() => {
+  //   // Check for cookie to avoid weird bug where axios call takes too long
+  //   if (Cookies.get('token')) {
+  //     axios({
+  //       method: 'GET',
+  //       url: 'http://localhost:4000/sales/forecast',
+  //       withCredentials: true,
+  //     }).then((response) => {
+  //       const months = response.data[1];
+  //       const sums = response.data[0];
+  //       const monthAndSum = [];
+  //       for (let i = 0; i < response.data[0].length; i++) {
+  //         if (months[i]) {
+  //           monthAndSum.push({ month: months[i].Month, sum: sums[i] });
+  //         } else {
+  //           monthAndSum.push({ month: null, sum: sums[i] });
+  //         }
+  //       }
+  //       setMonthAndForecast(monthAndSum);
+  //     });
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    // Check for cookie to avoid weird bug where axios call takes too long
-    if (Cookies.get('token')) {
-      axios({
-        method: 'GET',
-        url: 'http://localhost:4000/inventory/forecast',
-        withCredentials: true,
-      }).then((response) => {
-        const months = response.data[1];
-        const inventory = response.data[0];
-        const monthAndInventory = [];
-        for (let i = 0; i < response.data[0].length; i++) {
-          if (months[i]) {
-            monthAndInventory.push({
-              month: months[i].Month,
-              inventory: inventory[i],
-            });
-          } else {
-            monthAndInventory.push({
-              month: null,
-              inventory: inventory[i],
-            });
-          }
-        }
-        setMonthAndInventory(monthAndInventory);
-      });
-    }
-  }, []);
+  // useEffect(() => {
+  //   // Check for cookie to avoid weird bug where axios call takes too long
+  //   if (Cookies.get('token')) {
+  //     axios({
+  //       method: 'GET',
+  //       url: 'http://localhost:4000/inventory/forecast',
+  //       withCredentials: true,
+  //     }).then((response) => {
+  //       const months = response.data[1];
+  //       const inventory = response.data[0];
+  //       const monthAndInventory = [];
+  //       for (let i = 0; i < response.data[0].length; i++) {
+  //         if (months[i]) {
+  //           monthAndInventory.push({
+  //             month: months[i].Month,
+  //             inventory: inventory[i],
+  //           });
+  //         } else {
+  //           monthAndInventory.push({
+  //             month: null,
+  //             inventory: inventory[i],
+  //           });
+  //         }
+  //       }
+  //       setMonthAndInventory(monthAndInventory);
+  //     });
+  //   }
+  // }, []);
 
   useEffect(() => {
     // This whole section gets the month and year six months from now
@@ -271,7 +289,31 @@ const Home = () => {
           <Card className={classes.card}>
             <div className={classes.weightedCard}>
               <div className={classes.weightedHeader}>
-                <Typography type="h4">
+                <Typography variant="h5">Commission Year to Date</Typography>
+              </div>
+              <Divider />
+              <div className={classes.weightedContent}>
+                <Typography variant="h3">{commissionThisYear}</Typography>
+              </div>
+            </div>
+          </Card>
+          <Card className={classes.card}>
+            <div className={classes.weightedCard}>
+              <div className={classes.weightedHeader}>
+                <Typography variant="h5">Commission This Month</Typography>
+              </div>
+              <Divider />
+              <div className={classes.weightedContent}>
+                <Typography variant="h3">{commissionThisYear}</Typography>
+              </div>
+            </div>
+          </Card>
+        </div>
+        <div className={classes.cardGroupOne}>
+          <Card className={classes.card}>
+            <div className={classes.weightedCard}>
+              <div className={classes.weightedHeader}>
+                <Typography variant="h5">
                   Commission for Past Six Months
                 </Typography>
               </div>
@@ -280,9 +322,9 @@ const Home = () => {
                 {monthAndWeightedSales.map((element) => {
                   return (
                     <div className={classes.monthsAndSums}>
-                      <Typography>{element.month}</Typography>
+                      <Typography variant="h4">{element.month}</Typography>
                       <Divider className={classes.divider} />
-                      <Typography>{element.sum}</Typography>
+                      <Typography variant="h4">{element.sum}</Typography>
                     </div>
                   );
                 })}
@@ -290,7 +332,7 @@ const Home = () => {
             </div>
           </Card>
         </div>
-        <div className={classes.cardGroupOne}>
+        {/* <div className={classes.cardGroupOne}>
           <Card className={classes.card}>
             <div className={classes.weightedCard}>
               <div className={classes.weightedHeader}>
@@ -310,8 +352,8 @@ const Home = () => {
               </div>
             </div>
           </Card>
-        </div>
-        <div className={classes.cardGroupOne}>
+        </div> */}
+        {/* <div className={classes.cardGroupOne}>
           <Card className={classes.card}>
             <div className={classes.weightedCard}>
               <div className={classes.weightedHeader}>
@@ -341,16 +383,16 @@ const Home = () => {
               </div>
             </div>
           </Card>
-        </div>
+        </div> */}
 
-        <div className={classes.cardGroupTwo}>
+        {/* <div className={classes.cardGroupTwo}>
           <Card className={classes.inventoryCard}>
             <InventoryForecast />
           </Card>
           <Card className={classes.card}>
             <h1>Commission info goes here</h1>
           </Card>
-        </div>
+        </div> */}
       </div>
     </div>
   );
